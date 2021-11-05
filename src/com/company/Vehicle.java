@@ -9,12 +9,9 @@ public class Vehicle {
         this.y = y;
     }
 
-    public void Move(Edge[] route){
-        for (int i = 0; i < route.length; i++) {
-            this.x = route[i].end.x;
-            this.y = route[i].end.y;
+    public void Move(Edge e){
+            this.x = e.end.x;
+            this.y = e.end.y;
             System.out.println(this.x + ", " + this.y);
         }
-
-    }
 }
