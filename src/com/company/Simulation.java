@@ -10,10 +10,10 @@ public class Simulation extends Canvas implements Runnable {
     Node A = new Node(20,20);
     Node B = new Node(100,100);
     Node C = new Node(250,250);
-    Edge AB = new Edge(A,B, 50);
-    Edge BC = new Edge(B,C, 50);
-    Edge CB = new Edge(C,B, 50);
-    Edge BA = new Edge(B,A, 50);
+    Edge AB = new Edge(A,B, 0.84);
+    Edge BC = new Edge(B,C, 0.84);
+    Edge CB = new Edge(C,B, 0.84);
+    Edge BA = new Edge(B,A, 0.84);
     int i = 0;
     Vehicle car = new Vehicle(20,20);
     Edge[] arr = {AB,BC,CB,BA};
@@ -26,7 +26,19 @@ public class Simulation extends Canvas implements Runnable {
         thread.start();
     }
 
-    private void tick(){
+    private void integrate(double time,double delta){
+        double step = time/delta; // one step == 1 min
+        System.out.println(step);
+
+        double covered = AB.speed * step;
+        //double stepsToTake = AB.length/AB.speed;
+        //System.out.println(AB.length);
+        double x1 = AB.end.x/covered;
+        //System.out.println(x1);
+        double y1 = AB.end.y/covered;
+        car.x = car.x+(int)Math.round(x1);
+        car.y = car.y+(int)Math.round(y1);
+        //System.out.println(car.x + ", " + car.y);
 
     }
 
@@ -47,9 +59,12 @@ public class Simulation extends Canvas implements Runnable {
         g.fillRect(A.x,A.y,25,25);
         g.fillRect(B.x,B.y,25,25);
         g.fillRect(C.x,C.y,25,25);
+        g.drawLine(A.x,A.y,B.x,B.y);
+
+        g.drawLine(B.x,B.y,C.x,C.y);
         g.setColor(Color.red);
         g.fillRect(car.x, car.y, 15,15);
-        car.Move(arr[i]);
+        //car.Move(arr[i]);
         //////////////////////////////////
 
         g.dispose();
@@ -59,36 +74,28 @@ public class Simulation extends Canvas implements Runnable {
 
     @Override
     public void run() {
-        long lastTime = System.nanoTime();
-        double amountOfTicks = 60.0;
-        double ns = 1000000000 / amountOfTicks;
-        double delta = 0;
-        long timer = System.currentTimeMillis();
-        int updates = 0;
-        int frames = 0;
-        while(running){
-            long now = System.nanoTime();
-            delta += (now - lastTime) / ns;
-            lastTime = now;
-            while(delta >= 1){
-                tick();
-                updates++;
-                delta--;
-            }
-            render();
-            frames++;
+        double t = 0.0;
+        final double dt = 0.1;
 
-            if(System.currentTimeMillis() - timer > 1000){
-                timer += 1000;
-                System.out.println("FPS: " + frames + " TICKS: " + updates);
-                if(i == arr.length-1){
-                    i=0;
-                }else {
-                    i++;
-                }
-                frames = 0;
-                updates = 0;
+        double currentTime = System.currentTimeMillis()/1000;                          //hires_time_in_seconds();
+        double accumulator = 0.0;
+
+        while ( true )
+        {
+            double newTime = System.currentTimeMillis()/1000;
+            double frameTime = newTime - currentTime;
+            currentTime = newTime;
+
+            accumulator += frameTime;
+
+            while ( accumulator >= dt )
+            {
+                integrate(t, dt );
+                accumulator -= dt;
+                t += dt;
             }
+
+            render();
         }
 
     }
