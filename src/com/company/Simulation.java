@@ -77,12 +77,12 @@ public class Simulation extends Canvas implements Runnable {
         double t = 0.0;
         final double dt = 0.1;
 
-        double currentTime = System.currentTimeMillis()/1000;                          //hires_time_in_seconds();
+        double currentTime = System.currentTimeMillis();                          //hires_time_in_seconds();
         double accumulator = 0.0;
 
         while ( true )
         {
-            double newTime = System.currentTimeMillis()/1000;
+            double newTime = System.currentTimeMillis();
             double frameTime = newTime - currentTime;
             currentTime = newTime;
 

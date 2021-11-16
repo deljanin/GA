@@ -12,6 +12,6 @@ public class Edge {
         this.speed = speed;
         int x1 = this.end.x - this.start.x;
         int y1 = this.end.y - this.start.y;
-        this.length = (int)Math.round(Math.sqrt((x1*x1)+(y1*y1)));
+        this.length = (int) Math.round(Math.sqrt((x1 * x1) + (y1 * y1)));
     }
 }

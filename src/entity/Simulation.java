@@ -1,0 +1,78 @@
+package entity;
+
+import java.awt.*;
+import java.awt.image.BufferStrategy;
+import java.util.ArrayList;
+
+public class Simulation extends Canvas implements Runnable {
+    private boolean running;
+    private long ticks = 0;
+    ArrayList<Actor> actors = new ArrayList<>();; //objects within the simulation
+
+    private void initialize(){
+        //not needed presently, will be useful to set up data structures, compute paths, etc..
+    }
+    //constructor overloading
+    public Simulation() {
+        initialize();
+    }
+    public Simulation(boolean running) {
+        this.running = running;
+        initialize();
+    }
+
+    public Simulation(boolean running, ArrayList<Actor> actors) {
+        this.running = running;
+        this.actors = actors;
+        initialize();
+    }
+
+    public void run() {
+        long lastTime = System.nanoTime();
+        double amountOfTicks = 60.0; //i want 60fps for update
+        double ns = 1000000000 / amountOfTicks;
+        double delta = 0;
+        long timer = System.currentTimeMillis();
+        int frames = 0;
+        while (running) {
+            long now = System.nanoTime();
+            delta += (now - lastTime) / ns; //accumulator
+            lastTime = now;
+            while (delta >= 1) {
+                tick(delta);
+                render(delta); //I cap render to 6FPS, ce hoces max fps gre render ven
+                frames++;
+
+                if (System.currentTimeMillis() - timer > 1000) {
+                    timer += 1000;
+                    System.out.println("FPS: " + frames);
+                    frames = 0;
+                }
+                delta--;
+            }
+        }
+    }
+
+    private void tick(double elapsedTime) {
+        this.ticks++;
+        //let actors update them self
+        actors.stream().forEach(actor -> actor.tick(elapsedTime));
+    }
+
+    private void render(double elapsedTime) {
+        BufferStrategy bs = this.getBufferStrategy(); //this sounds expensive
+        if(bs == null){ //ugly
+            this.createBufferStrategy(3);
+            return;
+        }
+        Graphics graphics = bs.getDrawGraphics();
+        //i let all actors render them self
+        actors.parallelStream().forEach(actor -> actor.render(graphics, elapsedTime));
+        graphics.dispose();
+        bs.show();
+    }
+
+    public void start(){
+        new Thread(this).start();
+    }
+}
