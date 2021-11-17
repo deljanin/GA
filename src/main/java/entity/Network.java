@@ -72,4 +72,44 @@ public class Network {
         }
         return true;
     }
+
+    public String getIntersections_file() {
+        return intersections_file;
+    }
+
+    public void setIntersections_file(String intersections_file) {
+        this.intersections_file = intersections_file;
+    }
+
+    public String getRoads_file() {
+        return roads_file;
+    }
+
+    public void setRoads_file(String roads_file) {
+        this.roads_file = roads_file;
+    }
+
+    public HashMap<Integer, Intersection> getIntersectionMap() {
+        return intersectionMap;
+    }
+
+    public void setIntersectionMap(HashMap<Integer, Intersection> intersectionMap) {
+        this.intersectionMap = intersectionMap;
+    }
+
+    public HashMap<Integer, Road> getRoadMap() {
+        return roadMap;
+    }
+
+    public void setRoadMap(HashMap<Integer, Road> roadMap) {
+        this.roadMap = roadMap;
+    }
+
+    public Graph<Intersection, Road> getGraph() {
+        return graph;
+    }
+
+    public void setGraph(Graph<Intersection, Road> graph) {
+        this.graph = graph;
+    }
 }

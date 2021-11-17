@@ -10,12 +10,14 @@ public class Intersection extends Actor {
 
     @Override
     public void tick(double elapsedTime) {
-        //move my x, and y according to speed, and elapsedTime
+        //move my x, and y according to speed, and drawOvalelapsedTime
     }
 
     @Override
     public void render(Graphics graphics, double elapsedTime) {
         //render at x,y. use elapsedTime where animations are needed (likely never)
+        graphics.setColor(getColor());
+        graphics.fillOval((int)this.x,(int)this.y,10,10);
     }
 
     public int getId() {
@@ -48,6 +50,15 @@ public class Intersection extends Actor {
 
     public void setArc2(int arc2) {
         this.arc2 = arc2;
+    }
+    public Color getColor(){
+        switch (this.type){
+            case 0 : return new Color(13131231);
+            case 1 : return new Color(03133231);
+            case 2 : return new Color(1311213033);
+            case 3 : return new Color(933112130);
+            default: return Color.BLACK;
+        }
     }
 }
 

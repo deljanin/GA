@@ -7,8 +7,8 @@ parameter.
 * */
 
 public abstract class Actor {
-    private float x;
-    private float y;
+    float x;
+    float y;
 
     public abstract void tick(double elapsedTime);
     public abstract void render(Graphics graphics,double elapsedTime);

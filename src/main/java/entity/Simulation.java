@@ -19,7 +19,10 @@ public class Simulation extends Canvas implements Runnable {
         //not needed presently, will be useful to set up data structures, compute paths, etc..
         network = new Network("intersections.json", "roads.json");
         network.initialize();
-
+        //populate intersection
+        network.getIntersectionMap().values().forEach(intersection -> actors.add(intersection));
+        //populate roads
+        network.getRoadMap().values().forEach(road -> actors.add(road));
         try {
             cityImage =  ImageIO.read(new File("Koper.png"));
         } catch (IOException e) {
@@ -77,13 +80,15 @@ public class Simulation extends Canvas implements Runnable {
     private void render(double elapsedTime) {
         BufferStrategy bs = this.getBufferStrategy(); //this sounds expensive
         if(bs == null){ //ugly
-            this.createBufferStrategy(3);
+            this.createBufferStrategy(2);
             return;
         }
+
         Graphics graphics = bs.getDrawGraphics();
+
         graphics.drawImage(cityImage,0,0,null);
         //i let all actors render them self
-        actors.parallelStream().forEach(actor -> actor.render(graphics, elapsedTime));
+        actors.stream().forEach(actor -> actor.render(graphics, elapsedTime));
         graphics.dispose();
         bs.show();
     }
