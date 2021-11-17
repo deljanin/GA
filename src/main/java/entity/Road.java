@@ -21,4 +21,59 @@ public class Road extends Actor{
         //render at x,y. use elapsedTime where animations are needed (likely never)
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getStartId() {
+        return startId;
+    }
+
+    public void setStartId(int startId) {
+        this.startId = startId;
+    }
+
+    public int getEndId() {
+        return endId;
+    }
+
+    public void setEndId(int endId) {
+        this.endId = endId;
+    }
+
+    public int getStartArc() {
+        return startArc;
+    }
+
+    public void setStartArc(int startArc) {
+        this.startArc = startArc;
+    }
+
+    public int getEndArc() {
+        return endArc;
+    }
+
+    public void setEndArc(int endArc) {
+        this.endArc = endArc;
+    }
+
+    public float getLength() {
+        return length;
+    }
+
+    public void setLength(float length) {
+        this.length = length;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 }
