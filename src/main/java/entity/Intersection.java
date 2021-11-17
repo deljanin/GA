@@ -3,6 +3,10 @@ package entity;
 import java.awt.*;
 
 public class Intersection extends Actor {
+    private int id;
+    private int type;
+    private int arc1;
+    private int arc2;
 
     @Override
     public void tick(double elapsedTime) {
