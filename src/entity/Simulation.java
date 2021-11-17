@@ -1,16 +1,31 @@
 package entity;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Simulation extends Canvas implements Runnable {
     private boolean running;
     private long ticks = 0;
+    private Network network;
+    private BufferedImage cityImage;
     ArrayList<Actor> actors = new ArrayList<>();; //objects within the simulation
 
     private void initialize(){
         //not needed presently, will be useful to set up data structures, compute paths, etc..
+        network = new Network("intersections.json", "roads.json");
+        network.initialize();
+
+        try {
+            cityImage =  ImageIO.read(new File("Koper.png"));
+        } catch (IOException e) {
+            System.out.println("Failed to load city image");
+        }
+
     }
     //constructor overloading
     public Simulation() {
@@ -66,6 +81,7 @@ public class Simulation extends Canvas implements Runnable {
             return;
         }
         Graphics graphics = bs.getDrawGraphics();
+        graphics.drawImage(cityImage,0,0,null);
         //i let all actors render them self
         actors.parallelStream().forEach(actor -> actor.render(graphics, elapsedTime));
         graphics.dispose();
