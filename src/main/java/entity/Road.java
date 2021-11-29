@@ -20,6 +20,8 @@ public class Road extends Actor{
     public void render(Graphics graphics, double elapsedTime) {
         //render at x,y. use elapsedTime where animations are needed (likely never)
         //TODO: render road as line
+        //graphics.setColor(Color.black);                          // kako dostopat do x,y od startID in endId intersectionov...
+        //graphics.drawLine(startId,startId,endId,endId);
     }
 
     public int getId() {

@@ -23,6 +23,9 @@ public class Simulation extends Canvas implements Runnable {
         network.getIntersectionMap().values().forEach(intersection -> actors.add(intersection));
         //populate roads
         network.getRoadMap().values().forEach(road -> actors.add(road));
+        actors.add(network.getCars()[0]);   // dodamo testni avtek
+
+
         try {
             cityImage =  ImageIO.read(new File("Koper.png"));
         } catch (IOException e) {

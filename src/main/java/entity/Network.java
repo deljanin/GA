@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import org.jgrapht.Graph;
+import org.jgrapht.*;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
 import java.io.FileNotFoundException;
@@ -11,7 +13,7 @@ import java.io.FileReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Network {
@@ -21,6 +23,7 @@ public class Network {
     private HashMap<Integer, Intersection> intersectionMap;
     private HashMap<Integer, Road> roadMap;
     private Graph<Intersection, Road> graph;
+    private Vechicle[] cars;
 
     public Network(String intersections_file, String roads_file) {
         this.intersections_file = intersections_file;
@@ -66,6 +69,14 @@ public class Network {
                     + graph.vertexSet().size() + " vertices"
             );
 
+            cars = new Vechicle[1];
+            DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);   // test z enim avtkom, ali je pravilno da tukaj definiramo poti in naredimo vse avte?
+
+            Vechicle car1 = new Vechicle(50,(LinkedList<Road>) dijkstraShortestPath.getPath(intersections.get(1), intersections.get(2)).getEdgeList());
+
+            cars[0] = car1;             // array da vrnemo simulaciji, ki pol gre skozi array in jih adda kot actorje...
+
+
         } catch (FileNotFoundException e) {
             System.out.println("File not found exception, initialization failed.");
             return false;
@@ -100,6 +111,8 @@ public class Network {
     public HashMap<Integer, Road> getRoadMap() {
         return roadMap;
     }
+
+    public Vechicle[] getCars() {return cars;}
 
     public void setRoadMap(HashMap<Integer, Road> roadMap) {
         this.roadMap = roadMap;
