@@ -20,8 +20,10 @@ public class Road extends Actor{
     public void render(Graphics graphics, double elapsedTime) {
         //render at x,y. use elapsedTime where animations are needed (likely never)
         //TODO: render road as line
-        //graphics.setColor(Color.black);                          // kako dostopat do x,y od startID in endId intersectionov...
-        //graphics.drawLine(startId,startId,endId,endId);
+        Coordinates startCoordinates = sim.getXY(startId);
+        Coordinates endCoordinates = sim.getXY(endId);
+        graphics.setColor(Color.black);
+        graphics.drawLine((int)startCoordinates.getX(),(int)startCoordinates.getY(),(int)endCoordinates.getX(),(int)endCoordinates.getY()); //Fix with floor or whatever, think about it....
     }
 
     public int getId() {

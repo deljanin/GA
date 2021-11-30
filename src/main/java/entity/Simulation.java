@@ -23,8 +23,9 @@ public class Simulation extends Canvas implements Runnable {
         network.getIntersectionMap().values().forEach(intersection -> actors.add(intersection));
         //populate roads
         network.getRoadMap().values().forEach(road -> actors.add(road));
-        actors.add(network.getCars()[0]);   // dodamo testni avtek
+        network.getCars().forEach(car -> actors.add(car));// Add all cars to simulation
 
+        actors.forEach(actor -> actor.sim = this);//Add this simulation reference to all actors
 
         try {
             cityImage =  ImageIO.read(new File("Koper.png"));
@@ -94,6 +95,10 @@ public class Simulation extends Canvas implements Runnable {
         actors.stream().forEach(actor -> actor.render(graphics, elapsedTime));
         graphics.dispose();
         bs.show();
+    }
+
+    public Coordinates getXY(int intersectionId){
+        return network.getXY(intersectionId);
     }
 
     public void start(){

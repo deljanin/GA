@@ -9,6 +9,7 @@ parameter.
 public abstract class Actor {
     float x;
     float y;
+    Simulation sim;
 
     public abstract void tick(double elapsedTime);
     public abstract void render(Graphics graphics,double elapsedTime);

@@ -23,7 +23,7 @@ public class Network {
     private HashMap<Integer, Intersection> intersectionMap;
     private HashMap<Integer, Road> roadMap;
     private Graph<Intersection, Road> graph;
-    private Vechicle[] cars;
+    private List<Vechicle> cars = new ArrayList<>();
 
     public Network(String intersections_file, String roads_file) {
         this.intersections_file = intersections_file;
@@ -69,12 +69,12 @@ public class Network {
                     + graph.vertexSet().size() + " vertices"
             );
 
-            cars = new Vechicle[1];
+
             DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);   // test z enim avtkom, ali je pravilno da tukaj definiramo poti in naredimo vse avte?
 
             Vechicle car1 = new Vechicle(50,(LinkedList<Road>) dijkstraShortestPath.getPath(intersections.get(1), intersections.get(2)).getEdgeList());
 
-            cars[0] = car1;             // array da vrnemo simulaciji, ki pol gre skozi array in jih adda kot actorje...
+            cars.add(car1);             // array da vrnemo simulaciji, ki pol gre skozi array in jih adda kot actorje...
 
 
         } catch (FileNotFoundException e) {
@@ -82,6 +82,9 @@ public class Network {
             return false;
         }
         return true;
+    }
+    public Coordinates getXY(int intersectionId){
+        return new Coordinates(intersectionMap.get(intersectionId).x, intersectionMap.get(intersectionId).y);
     }
 
     public String getIntersections_file() {
@@ -112,7 +115,7 @@ public class Network {
         return roadMap;
     }
 
-    public Vechicle[] getCars() {return cars;}
+    public List<Vechicle> getCars() {return cars;}
 
     public void setRoadMap(HashMap<Integer, Road> roadMap) {
         this.roadMap = roadMap;
