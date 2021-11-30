@@ -11,6 +11,12 @@ public abstract class Actor {
     float y;
     Simulation sim;
 
+    public Actor(float x, float y, Simulation sim) {
+        this.x = x;
+        this.y = y;
+        this.sim = sim;
+    }
+
     public abstract void tick(double elapsedTime);
     public abstract void render(Graphics graphics,double elapsedTime);
 }

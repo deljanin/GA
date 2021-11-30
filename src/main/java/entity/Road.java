@@ -1,5 +1,7 @@
 package entity;
 
+import data.RoadData;
+
 import java.awt.*;
 
 public class Road extends Actor{
@@ -11,6 +13,22 @@ public class Road extends Actor{
     private float length;
     private int type;
 
+    private Intersection start;
+    private Intersection end;
+
+    public Road(RoadData roadData, Simulation simulation) {
+        super(0,0, simulation);
+        this.id = roadData.id;
+        this.startId = roadData.startId;
+        this.endId = roadData.endId;
+        this.startArc = roadData.startArc;
+        this.endArc = roadData.endArc;
+        this.length = roadData.length;
+        this.type = roadData.type;
+        start = sim.getIntersection(startId);
+        end = sim.getIntersection(endId);
+    }
+
     @Override
     public void tick(double elapsedTime) {
         //move my x, and y according to speed, and elapsedTime
@@ -20,10 +38,10 @@ public class Road extends Actor{
     public void render(Graphics graphics, double elapsedTime) {
         //render at x,y. use elapsedTime where animations are needed (likely never)
         //TODO: render road as line
-        Coordinates startCoordinates = sim.getXY(startId);
-        Coordinates endCoordinates = sim.getXY(endId);
+        //Coordinates startCoordinates = sim.getXY(startId);
+        //Coordinates endCoordinates = sim.getXY(endId);
         graphics.setColor(Color.black);
-        graphics.drawLine((int)Math.round(startCoordinates.getX()),(int)Math.round(startCoordinates.getY()),(int)Math.round(endCoordinates.getX()),Math.round((int)endCoordinates.getY())); //Fix with floor or whatever, think about it....
+        graphics.drawLine((int)Math.round(start.x),(int)Math.round(start.y),(int)Math.round(end.x),Math.round((int)end.y)); //Fix with floor or whatever, think about it....
     }
 
     public int getId() {
@@ -80,5 +98,34 @@ public class Road extends Actor{
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public Intersection getStart() {
+        return start;
+    }
+
+    public void setStart(Intersection start) {
+        this.start = start;
+    }
+
+    public Intersection getEnd() {
+        return end;
+    }
+
+    public void setEnd(Intersection end) {
+        this.end = end;
+    }
+
+    @Override
+    public String toString() {
+        return "Road{" +
+                "id=" + id +
+                ", startId=" + startId +
+                ", endId=" + endId +
+                ", startArc=" + startArc +
+                ", endArc=" + endArc +
+                ", length=" + length +
+                ", type=" + type +
+                '}';
     }
 }

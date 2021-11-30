@@ -17,7 +17,7 @@ public class Simulation extends Canvas implements Runnable {
 
     private void initialize(){
         //not needed presently, will be useful to set up data structures, compute paths, etc..
-        network = new Network("intersections.json", "roads.json");
+        network = new Network("intersections.json", "roads.json", this);
         network.initialize();
         //populate intersection
         network.getIntersectionMap().values().forEach(intersection -> actors.add(intersection));
@@ -97,8 +97,12 @@ public class Simulation extends Canvas implements Runnable {
         bs.show();
     }
 
-    public Coordinates getXY(int intersectionId){
-        return network.getXY(intersectionId);
+    //public Coordinates getXY(int intersectionId){
+    //    return network.getXY(intersectionId);
+   // }
+
+    public Intersection getIntersection(int id){
+        return network.getIntersectionMap().get(id);
     }
 
     public void start(){

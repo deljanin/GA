@@ -1,5 +1,7 @@
 package entity;
 
+import data.IntersectionData;
+
 import java.awt.*;
 
 public class Intersection extends Actor {
@@ -11,6 +13,14 @@ public class Intersection extends Actor {
     @Override
     public void tick(double elapsedTime) {
         //move my x, and y according to speed, and drawOvalelapsedTime
+    }
+
+    public Intersection(IntersectionData intersectionData, Simulation simulation) {
+        super(intersectionData.x,intersectionData.y, simulation);
+        this.id = intersectionData.id;
+        this.type = intersectionData.type;
+        this.arc1 = intersectionData.arc1;
+        this.arc2 = intersectionData.arc2;
     }
 
     @Override
@@ -51,6 +61,17 @@ public class Intersection extends Actor {
     public void setArc2(int arc2) {
         this.arc2 = arc2;
     }
+
+    @Override
+    public String toString() {
+        return "Intersection{" +
+                "id=" + id +
+                ", type=" + type +
+                ", arc1=" + arc1 +
+                ", arc2=" + arc2 +
+                '}';
+    }
+
     public Color getColor(){
         switch (this.type){
             case 0 : return new Color(13131231);
