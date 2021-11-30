@@ -23,7 +23,15 @@ public class Vechicle extends Actor{
 
         //kako točno računat premik avta v updated funkciji z elapsedTime?
 
-        //route.peek().getLength();
+        float totalTicks = route.peek().getLength()/this.speed; // dobimo vse tick-e tako da delimo dolžino v metrih z hitrostjo v m/s
+
+        // dobimo en step tako da delimo razdaljo med zacetno x coordinato od koncne in delimo s totalTicks
+        float oneStepX = (float) ((sim.getXY(route.peek().getStartId()).getX()-sim.getXY(route.peek().getEndId()).getX())/totalTicks);
+        float oneStepY = (float) ((sim.getXY(route.peek().getStartId()).getY()-sim.getXY(route.peek().getEndId()).getY())/totalTicks);
+
+        // dobimo trenutne koordinate tako, da množimo steps z elapsed time z one Step
+        this.x = (float) (oneStepX*elapsedTime);
+        this.y = (float) (oneStepY*elapsedTime);
     }
 
     @Override
