@@ -13,8 +13,8 @@ public class Vechicle extends Actor{
     public Vechicle(float speed, LinkedList<Road> route) {
         this.speed = speed;
         this.route = route;
-        //this.x = route.peek().getStartId().x                          Kako dostopat v routu preko start in end Idjev do koordinat....
-        //this.y = route.peek().getStartId().y
+        this.x = (float) sim.getXY(route.peek().getStartId()).getX();                     //Kako dostopat v routu preko start in end Idjev do koordinat....
+        this.y = (float) sim.getXY(route.peek().getStartId()).getY();
     }
 
     @Override
@@ -22,12 +22,14 @@ public class Vechicle extends Actor{
         //move my x, and y according to speed, and elapsedTime
 
         //kako točno računat premik avta v updated funkciji z elapsedTime?
+
+        //route.peek().getLength();
     }
 
     @Override
     public void render(Graphics graphics, double elapsedTime) {
         //render at x,y. use elapsedTime where animations are needed (likely never)
-        graphics.setColor(Color.yellow);
-        graphics.fillOval((int)this.x,(int)this.y,15,15);
+        graphics.setColor(Color.BLUE);
+        graphics.fillRect((int)this.x,(int)this.y,8,8);
     }
 }

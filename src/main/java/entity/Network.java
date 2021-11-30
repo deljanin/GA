@@ -7,14 +7,12 @@ import org.jgrapht.Graph;
 import org.jgrapht.*;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Network {
     private String intersections_file;
@@ -53,7 +51,7 @@ public class Network {
                 roadMap.put(road.getId(), road);
             });
             System.out.println("Successfully imported " + roads.size() + " roads");
-            graph = new DefaultDirectedGraph<Intersection,Road>(Road.class);
+            graph = new DefaultDirectedWeightedGraph<Intersection,Road>(Road.class);
 
             //add intersections as vertexes
             intersections.forEach(intersection -> graph.addVertex(intersection));
@@ -64,17 +62,23 @@ public class Network {
                         intersectionMap.get(road.getEndId()) //end
                 );
             });
+
+
             System.out.println("Constructed graph with "
                     + graph.edgeSet().size() + " edges and "
                     + graph.vertexSet().size() + " vertices"
             );
+            System.out.println(roads.get(1).getLength());   //  problem da graf ne mappa length --> weight
 
 
             DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);   // test z enim avtkom, ali je pravilno da tukaj definiramo poti in naredimo vse avte?
 
-            Vechicle car1 = new Vechicle(50,(LinkedList<Road>) dijkstraShortestPath.getPath(intersections.get(1), intersections.get(2)).getEdgeList());
+            List<Road> test = dijkstraShortestPath.getPath(intersections.get(1), intersections.get(2)).getEdgeList();
+            System.out.println(test.get(0).getId());
 
-            cars.add(car1);             // array da vrnemo simulaciji, ki pol gre skozi array in jih adda kot actorje...
+            Vechicle car1 = new Vechicle(14,(LinkedList<Road>) dijkstraShortestPath.getPath(intersections.get(1), intersections.get(2)).getEdgeList());
+
+            cars.add(car1);             // list avtkov, ki jih vrnemo simulaciji
 
 
         } catch (FileNotFoundException e) {

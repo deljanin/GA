@@ -1,10 +1,10 @@
 package entity;
 
 public class Coordinates {
-    private double x;
-    private double y;
+    private float x;
+    private float y;
 
-    public Coordinates(double x, double y) {
+    public Coordinates(float x, float y) {
         this.x = x;
         this.y = y;
     }
@@ -13,7 +13,7 @@ public class Coordinates {
         return x;
     }
 
-    public void setX(double x) {
+    public void setX(float x) {
         this.x = x;
     }
 
@@ -21,7 +21,7 @@ public class Coordinates {
         return y;
     }
 
-    public void setY(double y) {
+    public void setY(float y) {
         this.y = y;
     }
 }

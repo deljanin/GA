@@ -23,7 +23,7 @@ public class Road extends Actor{
         Coordinates startCoordinates = sim.getXY(startId);
         Coordinates endCoordinates = sim.getXY(endId);
         graphics.setColor(Color.black);
-        graphics.drawLine((int)startCoordinates.getX(),(int)startCoordinates.getY(),(int)endCoordinates.getX(),(int)endCoordinates.getY()); //Fix with floor or whatever, think about it....
+        graphics.drawLine((int)Math.round(startCoordinates.getX()),(int)Math.round(startCoordinates.getY()),(int)Math.round(endCoordinates.getX()),Math.round((int)endCoordinates.getY())); //Fix with floor or whatever, think about it....
     }
 
     public int getId() {
