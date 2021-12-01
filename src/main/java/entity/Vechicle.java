@@ -1,8 +1,11 @@
 package entity;
+
+
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
 
 public class Vechicle extends Actor{
     private float speed;
@@ -26,7 +29,7 @@ public class Vechicle extends Actor{
 
         //kako točno računat premik avta v updated funkciji z elapsedTime?
 
-        float totalTicks = route.peek().getLength()/this.speed; // dobimo vse tick-e tako da delimo dolžino v metrih z hitrostjo v m/s
+
 
         // dobimo en step tako da delimo razdaljo med zacetno x coordinato od koncne in delimo s totalTicks
         //float oneStepX = (float) ((sim.getXY(route.peek().getStartId()).getX()-sim.getXY(route.peek().getEndId()).getX())/totalTicks);
@@ -34,13 +37,22 @@ public class Vechicle extends Actor{
 
         //dont be afraid of references
         Road currentRoad = route.peek();
-        float oneStepX = Math.abs(currentRoad.getStart().x - currentRoad.getEnd().x);
-        float oneStepY = Math.abs(currentRoad.getStart().y - currentRoad.getEnd().y);
+        float d = 5^2 - ((int)(currentRoad.getEnd().x-this.x)^2 + (int)(currentRoad.getEnd().y-this.y)^2);
+        if (d>=0) {
+            System.out.println("Done");
+            //route.remove();
+            return;
+        }
+        float totalTicks = currentRoad.getLength()/this.speed; // dobimo vse tick-e tako da delimo dolžino v metrih z hitrostjo v m/s
+        float oneStepX = (currentRoad.getStart().x - currentRoad.getEnd().x)/totalTicks;
+        float oneStepY = (currentRoad.getStart().y - currentRoad.getEnd().y)/totalTicks;
 
 
         // dobimo trenutne koordinate tako, da množimo steps z elapsed time z one Step
-        this.x = (float) (oneStepX*elapsedTime);
-        this.y = (float) (oneStepY*elapsedTime);
+        this.x = this.x + (float) (oneStepX*elapsedTime);
+        this.y = this.y + (float) (oneStepY*elapsedTime);
+        System.out.println(this.x);
+        System.out.println(this.y);
     }
 
     @Override
