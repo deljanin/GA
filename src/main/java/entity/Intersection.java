@@ -81,5 +81,9 @@ public class Intersection extends Actor {
             default: return Color.BLACK;
         }
     }
+
+    public boolean canIGo(){
+        return true;
+    }
 }
 

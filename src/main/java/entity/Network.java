@@ -87,7 +87,7 @@ public class Network {
 
             List<Road> test = dijkstraShortestPath.getPath(intersections.get(1), intersections.get(2)).getEdgeList();
             //debug print of roads
-            test.stream().forEach(road -> System.out.println(road));
+            //test.stream().forEach(road -> System.out.println(road));
 
             Vechicle car1 = new Vechicle(14,test,simulation);
 
