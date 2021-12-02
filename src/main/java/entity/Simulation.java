@@ -61,7 +61,8 @@ public class Simulation extends Canvas implements Runnable {
             delta += (now - lastTime) / ns; //accumulator
             lastTime = now;
             while (delta >= 1) {
-                tick(delta);
+                double slowdown = delta * 0.01;
+                tick(slowdown);
                 render(delta); //I cap render to 6FPS, ce hoces max fps gre render ven
                 frames++;
 
