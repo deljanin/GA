@@ -85,7 +85,7 @@ public class Network {
 
             DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);   // test z enim avtkom, ali je pravilno da tukaj definiramo poti in naredimo vse avte?
 
-            List<Road> test = dijkstraShortestPath.getPath(intersections.get(4), intersections.get(9)).getEdgeList();
+            List<Road> test = dijkstraShortestPath.getPath(intersections.get(1), intersections.get(2)).getEdgeList();
             //debug print of roads
             //test.stream().forEach(road -> System.out.println(road));
 

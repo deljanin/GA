@@ -70,8 +70,8 @@ public class Vechicle extends Actor{
             System.out.println("Not done!!!");
             float totalTicks = currentRoad.getLength() / this.speed; // dobimo vse tick-e tako da delimo dolžino v metrih z hitrostjo v m/s
             System.out.println("Total ticks: " + totalTicks);
-            float oneStepX = (currentRoad.getStart().x - currentRoad.getEnd().x) / totalTicks;
-            float oneStepY = (currentRoad.getStart().y - currentRoad.getEnd().y) / totalTicks;
+            float oneStepX = ((currentRoad.getStart().x - currentRoad.getEnd().x) / totalTicks)*(-1);
+            float oneStepY = ((currentRoad.getStart().y - currentRoad.getEnd().y) / totalTicks)*(-1);
             System.out.println("One step of X: " + oneStepX);
             System.out.println("One step of Y: " + oneStepY);
 
