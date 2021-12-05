@@ -44,7 +44,7 @@ public class Network {
             List<IntersectionData> intersectionsData = new Gson().fromJson(reader, listType);
             //now construct actual Intersection objects from the data class
             List<Intersection> intersections = new ArrayList<Intersection>();
-            intersectionsData.stream().forEach(I -> intersections.add(new Intersection(I, simulation)));
+            intersectionsData.forEach(I -> intersections.add(new Intersection(I, simulation)));
             intersectionMap = new HashMap<Integer, Intersection>(intersections.size());
             intersections.forEach(intersection -> {
                 intersectionMap.put(intersection.getId(), intersection);
@@ -55,7 +55,7 @@ public class Network {
             reader = new JsonReader(new FileReader(this.roads_file));
             List<RoadData> roadsData = new Gson().fromJson(reader, listType);
             List<Road> roads = new ArrayList<Road>();
-            roadsData.stream().forEach(R-> roads.add(new Road(R,simulation)));
+            roadsData.forEach(R-> roads.add(new Road(R,simulation)));
             roadMap = new HashMap<Integer, Road>(roads.size());
             roads.forEach(road -> {
                 roadMap.put(road.getId(), road);
@@ -93,13 +93,14 @@ public class Network {
 
             DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);   // test z enim avtkom, ali je pravilno da tukaj definiramo poti in naredimo vse avte?
             Random rnd = new Random();
-            for (int i = 0; i < 25; i++) {
+            for (int i = 0; i < 500; i++) {
                 int start = rnd.nextInt(parking.size());
                 Intersection tmp = parking.remove(start);
                 int end = rnd.nextInt(parking.size());
                 List<Road> route = dijkstraShortestPath.getPath(intersections.get(start), intersections.get(end)).getEdgeList();
-                if (route.isEmpty()) continue;
                 parking.add(tmp);
+                if (route.isEmpty()) continue;
+
 
                 //debug print of roads
                 //test.stream().forEach(road -> System.out.println(road));

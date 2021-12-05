@@ -59,6 +59,7 @@ public class Vechicle extends Actor{
             System.out.println("Done");
             isRiding = false;
             if (sim.getIntersection(currentRoad.getEnd().getId()).canIGo()) nextRoad();
+
             //route.remove();
         } else {
             System.out.println("Not done!!!");
@@ -84,12 +85,16 @@ public class Vechicle extends Actor{
     public void render(Graphics graphics, double elapsedTime) {
         //render at x,y. use elapsedTime where animations are needed (likely never)
         graphics.setColor(Color.BLUE);
-        graphics.fillRect((int)this.x,(int)this.y,8,8);
+        graphics.fillRect((int)this.x,(int)this.y,5,5);
     }
 
     public void nextRoad(){
         //System.out.println(route.peek());
         route.remove();
+        if (!route.isEmpty()) {
+            this.x = route.peek().getStart().x;
+            this.y = route.peek().getStart().y;
+        }
         isRiding = true;
         if (route.isEmpty()) isFinished=true;
     }
