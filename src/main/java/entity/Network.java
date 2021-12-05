@@ -14,6 +14,7 @@ import org.jgrapht.graph.DirectedWeightedPseudograph;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -81,17 +82,33 @@ public class Network {
             );
 
             //fixed?: System.out.println(roads.get(1).getLength());   //  problem da graf ne mappa length --> weight
+            LinkedList<Intersection> parking = new LinkedList();
+            for (Intersection x:intersectionMap.values()) {
+                if (x.getType() == 3){
+                    parking.add(x);
+                }
+            }
+
 
 
             DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);   // test z enim avtkom, ali je pravilno da tukaj definiramo poti in naredimo vse avte?
+            Random rnd = new Random();
+            for (int i = 0; i < 25; i++) {
+                int start = rnd.nextInt(parking.size());
+                Intersection tmp = parking.remove(start);
+                int end = rnd.nextInt(parking.size());
+                List<Road> route = dijkstraShortestPath.getPath(intersections.get(start), intersections.get(end)).getEdgeList();
+                if (route.isEmpty()) continue;
+                parking.add(tmp);
 
-            List<Road> test = dijkstraShortestPath.getPath(intersections.get(1), intersections.get(2)).getEdgeList();
-            //debug print of roads
-            //test.stream().forEach(road -> System.out.println(road));
+                //debug print of roads
+                //test.stream().forEach(road -> System.out.println(road));
 
-            Vechicle car1 = new Vechicle(14,test,simulation);
+                Vechicle car = new Vechicle(14,route,simulation);
 
-            cars.add(car1);             // list avtkov, ki jih vrnemo simulaciji
+                cars.add(car);             // list avtkov, ki jih vrnemo simulaciji
+            }
+
 
 
         } catch (FileNotFoundException e) {

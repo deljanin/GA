@@ -27,7 +27,6 @@ public class Vechicle extends Actor{
 
     @Override
     public void tick(double elapsedTime) {
-        //System.out.println(elapsedTime);
         if (!isRiding) return;
         if (isFinished) return;
 
@@ -43,25 +42,20 @@ public class Vechicle extends Actor{
         //dont be afraid of references
         Road currentRoad = route.peek();
 
-        //System.out.println("Coordinates of the car: ( " + this.x + ", " + this.y + ")");
-        //System.out.println("Coordinates of the starting intersection: ( " + currentRoad.getStart().x + ", " + currentRoad.getStart().y + ")");
-
         //--------------CIRCLE AROUND INTERSECTIONS CALCULATION----------------
         float prviParameter = (currentRoad.getEnd().x - this.x)*(currentRoad.getEnd().x - this.x);
         float drugiParameter = (currentRoad.getEnd().y - this.y)*(currentRoad.getEnd().y - this.y);
 
         float sestevek = prviParameter + drugiParameter;
 
-        System.out.println("Calculation test: " + sestevek);
 
-        float d = 10*10 - sestevek;
+        float d = 5*5 - sestevek;
         //---------------------------------------------------------------------
 
-        System.out.println("D je: " + d);
-        //System.out.println("Road Length: " + currentRoad.getLength());
+        //System.out.println("D je: " + d);
 
         //If radius squared of the intersection is >= 0 then we are at the intersection...
-        if (d >= 0) {
+        if (d > 0) {
             System.out.println("Done");
             isRiding = false;
             if (sim.getIntersection(currentRoad.getEnd().getId()).canIGo()) nextRoad();
@@ -69,20 +63,20 @@ public class Vechicle extends Actor{
         } else {
             System.out.println("Not done!!!");
             float totalTicks = currentRoad.getLength() / this.speed; // dobimo vse tick-e tako da delimo dolžino v metrih z hitrostjo v m/s
-            System.out.println("Total ticks: " + totalTicks);
+            //System.out.println("Total ticks: " + totalTicks);
             float oneStepX = ((currentRoad.getStart().x - currentRoad.getEnd().x) / totalTicks)*(-1);
             float oneStepY = ((currentRoad.getStart().y - currentRoad.getEnd().y) / totalTicks)*(-1);
-            System.out.println("One step of X: " + oneStepX);
-            System.out.println("One step of Y: " + oneStepY);
+            //System.out.println("One step of X: " + oneStepX);
+            //System.out.println("One step of Y: " + oneStepY);
 
-            System.out.println("Acctual step of X: " + (float) (oneStepX * elapsedTime));
-            System.out.println("Acctual step of Y: " + (float) (oneStepY * elapsedTime));
+            //System.out.println("Acctual step of X: " + (float) (oneStepX * elapsedTime));
+            //System.out.println("Acctual step of Y: " + (float) (oneStepY * elapsedTime));
 
             // dobimo trenutne koordinate tako, da množimo steps z elapsed time z one Step
             this.x = this.x + ((float) (oneStepX * elapsedTime));
             this.y = this.y + ((float) (oneStepY * elapsedTime));
-            System.out.println(this.x);
-            System.out.println(this.y);
+            //System.out.println(this.x);
+            //System.out.println(this.y);
 
         }
     }
