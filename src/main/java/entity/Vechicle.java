@@ -25,6 +25,9 @@ public class Vechicle extends Actor{
          */
     }
 
+
+    /*tick too fast for render*/
+
     @Override
     public void tick(double elapsedTime) {
         if (!isRiding) return;
@@ -56,13 +59,13 @@ public class Vechicle extends Actor{
 
         //If radius squared of the intersection is >= 0 then we are at the intersection...
         if (d > 0) {
-            System.out.println("Done");
+            //System.out.println("Done");
             isRiding = false;
             if (sim.getIntersection(currentRoad.getEnd().getId()).canIGo()) nextRoad();
 
             //route.remove();
         } else {
-            System.out.println("Not done!!!");
+            //System.out.println("Not done!!!");
             float totalTicks = currentRoad.getLength() / this.speed; // dobimo vse tick-e tako da delimo dolžino v metrih z hitrostjo v m/s
             //System.out.println("Total ticks: " + totalTicks);
             float oneStepX = ((currentRoad.getStart().x - currentRoad.getEnd().x) / totalTicks)*(-1);
@@ -88,14 +91,50 @@ public class Vechicle extends Actor{
         graphics.fillRect((int)this.x,(int)this.y,5,5);
     }
 
-    public void nextRoad(){
+    public synchronized void nextRoad(){
         //System.out.println(route.peek());
-        route.remove();
-        if (!route.isEmpty()) {
+        if (route.size() > 1) {
+            route.remove();
             this.x = route.peek().getStart().x;
             this.y = route.peek().getStart().y;
         }
         isRiding = true;
-        if (route.isEmpty()) isFinished=true;
+        if (route.isEmpty()) {
+            isFinished = true;
+            isRiding = true;
+        }
+
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
+    public Queue<Road> getRoute() {
+        return route;
+    }
+
+    public void setRoute(Queue<Road> route) {
+        this.route = route;
+    }
+
+    public boolean isRiding() {
+        return isRiding;
+    }
+
+    public void setRiding(boolean riding) {
+        isRiding = riding;
+    }
+
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+    public void setFinished(boolean finished) {
+        isFinished = finished;
     }
 }

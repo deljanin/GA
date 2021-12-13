@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Simulation extends Canvas implements Runnable {
     private boolean running;
@@ -14,8 +16,10 @@ public class Simulation extends Canvas implements Runnable {
     private Network network;
     private BufferedImage cityImage;
     ArrayList<Actor> actors = new ArrayList<>();; //objects within the simulation
+    Config config;
 
     private void initialize(){
+        config = new Config("config.json");
         //not needed presently, will be useful to set up data structures, compute paths, etc..
         network = new Network("intersections.json", "roads.json", this);
         network.initialize();
@@ -61,7 +65,7 @@ public class Simulation extends Canvas implements Runnable {
             delta += (now - lastTime) / ns; //accumulator
             lastTime = now;
             while (delta >= 1) {
-                double slowdown = delta * 0.5; //slowdown
+                double slowdown = delta * (double)config.getConfigMap().get("simulationSpeed"); //slowdown
                 tick(slowdown);
                 render(delta); //I cap render to 6FPS, ce hoces max fps gre render ven
                 frames++;
@@ -80,6 +84,13 @@ public class Simulation extends Canvas implements Runnable {
         this.ticks++;
         //let actors update them self
         actors.stream().forEach(actor -> actor.tick(elapsedTime));
+//        Use something similar with filter to only do tick for !isFinished
+//        List<Vechicle> vehicles = new ArrayList<>();
+//
+//        actors.stream().filter(actor -> actor.getClass() == Vechicle.class ).collect(Collectors.toSet()).stream().forEach(actor -> {
+//            vehicles.add((Vechicle) actor);
+//        });
+//        System.out.println(vehicles.stream().filter(vechicle -> vechicle.isRiding()).count());
     }
 
     private void render(double elapsedTime) {

@@ -38,7 +38,7 @@ public class Network {
     public boolean initialize() {
         Gson gson = new Gson();
         try {
-            //prase from json to dataclass (IntersrctionData)
+            //parse from json to dataclass (IntersrctionData)
             Type listType = new TypeToken<ArrayList<IntersectionData>>() {}.getType();
             JsonReader reader = new JsonReader(new FileReader(this.intersections_file));
             List<IntersectionData> intersectionsData = new Gson().fromJson(reader, listType);
@@ -67,14 +67,22 @@ public class Network {
             intersections.forEach(intersection -> graph.addVertex(intersection));
             //add edges by mapping them to vertices
             roads.forEach(road -> {
-                graph.addEdge(
-                        intersectionMap.get(road.getStartId()), //start
-                        intersectionMap.get(road.getEndId()), //end
-                        road
-                );
-                graph.setEdgeWeight(road,road.getLength());
+                if(road != null) {
+                    graph.addEdge(
+
+                            intersectionMap.get(road.getStartId()), //start
+                            intersectionMap.get(road.getEndId()), //end
+                            road
+                    );
+                    graph.setEdgeWeight(road, road.getLength());
+
+                    //Adds incoming and outgoing roads of an intersections
+                    intersectionMap.get(road.getStartId()).addIn(road);
+                    intersectionMap.get(road.getEndId()).addOut(road);
+                }
             });
 
+            //intersectionMap.values().forEach(v -> System.out.println("id: " + v.getId() + ", in: " + v.getRoadsIn().size() + ", out: " + v.getRoadsOut().size()));
 
             System.out.println("Constructed graph with "
                     + graph.edgeSet().size() + " edges and "
@@ -92,19 +100,12 @@ public class Network {
 
 
             DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);   // test z enim avtkom, ali je pravilno da tukaj definiramo poti in naredimo vse avte?
-            Random rnd = new Random();
-            for (int i = 0; i < 500; i++) {
-                int start = rnd.nextInt(parking.size());
-                Intersection tmp = parking.remove(start);
-                int end = rnd.nextInt(parking.size());
-                List<Road> route = dijkstraShortestPath.getPath(intersections.get(start), intersections.get(end)).getEdgeList();
-                parking.add(tmp);
-                if (route.isEmpty()) continue;
-
-
+            Random rnd = new Random(5);
+            for (int i = 0; i < 2500; i++) {
+                Collections.shuffle(parking);
+                List<Road> route = dijkstraShortestPath.getPath(parking.getFirst(), parking.getLast()).getEdgeList();
                 //debug print of roads
                 //test.stream().forEach(road -> System.out.println(road));
-
                 Vechicle car = new Vechicle(14,route,simulation);
 
                 cars.add(car);             // list avtkov, ki jih vrnemo simulaciji

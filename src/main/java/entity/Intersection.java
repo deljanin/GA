@@ -3,12 +3,41 @@ package entity;
 import data.IntersectionData;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class Intersection extends Actor {
     private int id;
     private int type;
     private int arc1;
     private int arc2;
+    private HashMap roadsIn;
+    private HashMap roadsOut;
+
+    public HashMap getRoadsIn() {
+        return roadsIn;
+    }
+
+    public void setRoadsIn(HashMap roadsIn) {
+        this.roadsIn = roadsIn;
+    }
+
+    public HashMap getRoadsOut() {
+        return roadsOut;
+    }
+
+    public void setRoadsOut(HashMap roadsOut) {
+        this.roadsOut = roadsOut;
+    }
+
+    //Add incoming and outgoing roads of an intersection
+    public void addIn(Road road){
+        this.roadsIn.put(road.getId(), road);
+    }
+    public void addOut(Road road){
+        this.roadsOut.put(road.getId(), road);
+    }
 
     @Override
     public void tick(double elapsedTime) {
@@ -21,12 +50,17 @@ public class Intersection extends Actor {
         this.type = intersectionData.type;
         this.arc1 = intersectionData.arc1;
         this.arc2 = intersectionData.arc2;
+        this.roadsIn = new HashMap();
+        this.roadsOut = new HashMap();
     }
 
     @Override
     public void render(Graphics graphics, double elapsedTime) {
         //render at x,y. use elapsedTime where animations are needed (likely never)
         graphics.setColor(getColor());
+//        if(this.id == 36){
+//            graphics.setColor(new Color(0x00FF32));
+//        }
         graphics.fillOval((int)this.x,(int)this.y,10,10);
     }
 
