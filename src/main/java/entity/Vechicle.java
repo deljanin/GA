@@ -101,7 +101,7 @@ public class Vechicle extends Actor{
         isRiding = true;
         if (route.isEmpty()) {
             isFinished = true;
-            isRiding = true;
+            isRiding = false;
         }
 
     }

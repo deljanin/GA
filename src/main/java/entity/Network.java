@@ -77,8 +77,9 @@ public class Network {
                     graph.setEdgeWeight(road, road.getLength());
 
                     //Adds incoming and outgoing roads of an intersections
-                    intersectionMap.get(road.getStartId()).addIn(road);
-                    intersectionMap.get(road.getEndId()).addOut(road);
+                    intersectionMap.get(road.getEndId()).addIn(road);
+                    intersectionMap.get(road.getStartId()).addOut(road);
+
                 }
             });
 
