@@ -81,10 +81,10 @@ public class Vechicle extends Actor{
     public synchronized void nextRoad(){
         //System.out.println(route.peek());
         if (route.size() > 1) {
+            this.x = route.peek().getEnd().x;
+            this.y = route.peek().getEnd().y;
             route.remove();
             next=false;
-            this.x = route.peek().getStart().x;
-            this.y = route.peek().getStart().y;
         }
         isRiding = true;
         if (route.isEmpty()) {

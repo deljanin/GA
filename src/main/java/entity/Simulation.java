@@ -94,7 +94,7 @@ public class Simulation extends Canvas implements Runnable {
     private void tick(double elapsedTime) {
         this.ticks++;
         //let actors update them self
-       //actors.removeAll(actors.stream().filter(actor -> actor.getClass() == Vechicle.class).filter(actor -> !((Vechicle) actor).isFinished()).collect(Collectors.toCollection()));
+        actors.removeAll(actors.stream().filter(actor -> actor.getClass() == Vechicle.class).filter(actor -> ((Vechicle) actor).isFinished()).collect(Collectors.toSet()));
 
 
         actors.stream().forEach(actor -> actor.tick(elapsedTime));

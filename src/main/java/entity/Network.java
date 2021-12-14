@@ -17,6 +17,7 @@ import java.io.FileReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Network {
     private String intersections_file;
@@ -90,21 +91,21 @@ public class Network {
             );
 
             //fixed?: System.out.println(roads.get(1).getLength());   //  problem da graf ne mappa length --> weight
-            LinkedList<Intersection> parking = new LinkedList();
-            for (Intersection x:intersectionMap.values()) {
-                if (x.getType() == 3){
-                    parking.add(x);
-                }
-            }
+            LinkedList<Intersection> parking = intersectionMap.values().stream().filter(intersection -> intersection.getType() == 3).collect(Collectors.toCollection(LinkedList::new));
+//            for (Intersection x:intersectionMap.values().stream().filter()) {
+//                if (x.getType() == 3){
+//                    parking.add(x);
+//                }
+//            }
 
 
 
             DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);   // test z enim avtkom, ali je pravilno da tukaj definiramo poti in naredimo vse avte?
             Random rnd = new Random(5);
-            for (int i = 0; i < 2500; i++) {
+            for (int i = 0; i < 5000; i++) {
                 Collections.shuffle(parking);
                 List<Road> route = dijkstraShortestPath.getPath(parking.getFirst(), parking.getLast()).getEdgeList();
-                //debug print of roads
+                //debug print of roads7
                 //test.stream().forEach(road -> System.out.println(road));
                 Vechicle car = new Vechicle(14,route,simulation);
 
