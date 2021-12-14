@@ -1,11 +1,17 @@
 package entity;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +25,12 @@ public class Simulation extends Canvas implements Runnable {
     Config config;
 
     private void initialize(){
-        config = new Config("config.json");
+
+        try {
+            config = new Gson().fromJson(Files.readString(Paths.get("config.json")), Config.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         //not needed presently, will be useful to set up data structures, compute paths, etc..
         network = new Network("intersections.json", "roads.json", this);
         network.initialize();
@@ -65,7 +76,7 @@ public class Simulation extends Canvas implements Runnable {
             delta += (now - lastTime) / ns; //accumulator
             lastTime = now;
             while (delta >= 1) {
-                double slowdown = delta * (double)config.getConfigMap().get("simulationSpeed"); //slowdown
+                double slowdown = delta * config.simulationSpeed; //slowdown
                 tick(slowdown);
                 render(delta); //I cap render to 6FPS, ce hoces max fps gre render ven
                 frames++;
@@ -83,6 +94,9 @@ public class Simulation extends Canvas implements Runnable {
     private void tick(double elapsedTime) {
         this.ticks++;
         //let actors update them self
+       //actors.removeAll(actors.stream().filter(actor -> actor.getClass() == Vechicle.class).filter(actor -> !((Vechicle) actor).isFinished()).collect(Collectors.toCollection()));
+
+
         actors.stream().forEach(actor -> actor.tick(elapsedTime));
 //        Use something similar with filter to only do tick for !isFinished
 //        List<Vechicle> vehicles = new ArrayList<>();
