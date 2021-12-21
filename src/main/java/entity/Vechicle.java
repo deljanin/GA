@@ -31,8 +31,7 @@ public class Vechicle extends Actor{
 
     @Override
     public void tick(double elapsedTime) {
-        if (!isRiding) return;
-        if (isFinished) return;
+        if (!isRiding || isFinished || route.isEmpty()) return;
         //dont be afraid of references
         Road currentRoad = route.peek();
 
