@@ -6,15 +6,11 @@ import com.google.gson.stream.JsonReader;
 import data.IntersectionData;
 import data.RoadData;
 import org.jgrapht.Graph;
-import org.jgrapht.*;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -80,6 +76,9 @@ public class Network {
                     //Adds incoming and outgoing roads of an intersections
                     intersectionMap.get(road.getEndId()).addIn(road);
                     intersectionMap.get(road.getStartId()).addOut(road);
+
+                    //initializing intersection queues for every incoming road
+                    intersectionMap.values().forEach(Intersection::initialize);
                 }
             });
 

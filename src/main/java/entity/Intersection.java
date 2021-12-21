@@ -6,28 +6,32 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Intersection extends Actor {
     private int id;
     private int type;
     private int arc1;
     private int arc2;
-    private HashMap roadsIn;
-    private HashMap roadsOut;
+    private HashMap<Integer, Road> roadsIn;
+    private HashMap<Integer, Road> roadsOut;
+    private HashMap<Integer, BlockingQueue<Vechicle>> vehicleQueue;
 
-    public HashMap getRoadsIn() {
+    public HashMap<Integer, Road> getRoadsIn() {
         return roadsIn;
     }
 
-    public void setRoadsIn(HashMap roadsIn) {
+    public void setRoadsIn(HashMap<Integer, Road> roadsIn) {
         this.roadsIn = roadsIn;
     }
 
-    public HashMap getRoadsOut() {
+    public HashMap<Integer, Road> getRoadsOut() {
         return roadsOut;
     }
 
-    public void setRoadsOut(HashMap roadsOut) {
+    public void setRoadsOut(HashMap<Integer, Road> roadsOut) {
         this.roadsOut = roadsOut;
     }
 
@@ -50,8 +54,15 @@ public class Intersection extends Actor {
         this.type = intersectionData.type;
         this.arc1 = intersectionData.arc1;
         this.arc2 = intersectionData.arc2;
-        this.roadsIn = new HashMap();
-        this.roadsOut = new HashMap();
+        this.roadsIn = new HashMap<Integer, Road>();
+        this.roadsOut = new HashMap<Integer, Road>();
+    }
+
+    public void initialize(){
+        vehicleQueue = new HashMap<Integer, BlockingQueue<Vechicle>>();
+        roadsIn.values().forEach(road ->{
+            vehicleQueue.put(road.getId(), new LinkedBlockingQueue<>());
+        });
     }
 
     @Override
