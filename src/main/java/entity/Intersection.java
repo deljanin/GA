@@ -3,10 +3,8 @@ package entity;
 import data.IntersectionData;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -128,7 +126,13 @@ public class Intersection extends Actor {
     }
 
     public boolean canIGo(){
-        return true;
+        if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() >= vehicleQueue.size()-1) return true;
+        return false;
+    }
+
+    public void arrived(int roadID, Vechicle car) throws InterruptedException {
+        //System.out.println(car);
+        vehicleQueue.get(roadID).put(car);
     }
 }
 

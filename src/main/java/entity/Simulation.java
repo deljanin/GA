@@ -97,7 +97,13 @@ public class Simulation extends Canvas implements Runnable {
         actors.removeAll(actors.stream().filter(actor -> actor.getClass() == Vechicle.class).filter(actor -> ((Vechicle) actor).isFinished()).collect(Collectors.toSet()));
 
 
-        actors.stream().forEach(actor -> actor.tick(elapsedTime));
+        actors.stream().forEach(actor -> {
+            try {
+                actor.tick(elapsedTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
 //        Use something similar with filter to only do tick for !isFinished
 //        List<Vechicle> vehicles = new ArrayList<>();
 //

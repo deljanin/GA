@@ -17,6 +17,6 @@ public abstract class Actor {
         this.sim = sim;
     }
 
-    public abstract void tick(double elapsedTime);
+    public abstract void tick(double elapsedTime) throws InterruptedException;
     public abstract void render(Graphics graphics,double elapsedTime);
 }

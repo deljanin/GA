@@ -30,7 +30,7 @@ public class Vechicle extends Actor{
     /*tick too fast for render*/
 
     @Override
-    public void tick(double elapsedTime) {
+    public void tick(double elapsedTime) throws InterruptedException {
         if (!isRiding || isFinished || route.isEmpty()) return;
         //dont be afraid of references
         Road currentRoad = route.peek();
@@ -61,6 +61,7 @@ public class Vechicle extends Actor{
         //If radius squared of the intersection is >= 0 then we are at the intersection...
         if (d > 0 || next) {
             isRiding = false;
+            sim.getIntersection(currentRoad.getEnd().getId()).arrived(currentRoad.getId(), this);
             if (sim.getIntersection(currentRoad.getEnd().getId()).canIGo()) nextRoad();
         } else {
             if (dNext > 0) next=true;
