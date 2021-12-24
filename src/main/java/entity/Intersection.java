@@ -43,6 +43,7 @@ public class Intersection extends Actor {
 
     @Override
     public void tick(double elapsedTime) {
+        canIGo();
         //move my x, and y according to speed, and drawOvalelapsedTime
     }
 
@@ -126,7 +127,23 @@ public class Intersection extends Actor {
     }
 
     public boolean canIGo(){
-        if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() >= vehicleQueue.size()-1) return true;
+        if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() >= vehicleQueue.size()) return true;
+        List<Vechicle> onTheIntersection = new ArrayList<>();
+        vehicleQueue.values().forEach(q -> {
+            if (!q.isEmpty()){
+                Vechicle v = q.peek();
+                onTheIntersection.add(v);
+                //if(v.getRoute().peek().getEndArc() == arc1) v.setRiding(true);
+            }
+        });
+        if (onTheIntersection.size() == 1) {
+            Vechicle tmp = onTheIntersection.get(0);
+            vehicleQueue.get(tmp.getRoute().peek().getId()).remove(tmp);
+            tmp.setRiding(true);
+            return true;
+        }
+
+
         return false;
     }
 
