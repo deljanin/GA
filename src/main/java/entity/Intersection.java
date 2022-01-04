@@ -127,7 +127,7 @@ public class Intersection extends Actor {
     }
 
     public boolean canIGo(){
-        if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() >= vehicleQueue.size()) return true;
+        if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() >= vehicleQueue.size()-1) return true;
         List<Vechicle> onTheIntersection = new ArrayList<>();
         vehicleQueue.values().forEach(q -> {
             if (!q.isEmpty()){
