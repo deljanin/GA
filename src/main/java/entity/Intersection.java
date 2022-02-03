@@ -61,7 +61,9 @@ public class Intersection extends Actor {
         vehicleQueue = new HashMap<Integer, BlockingQueue<Vechicle>>();
         roadsIn.values().forEach(road ->{
             vehicleQueue.put(road.getId(), new LinkedBlockingQueue<>());
+            //System.out.println(road.getId());
         });
+
     }
 
     @Override
@@ -126,8 +128,8 @@ public class Intersection extends Actor {
         }
     }
 
-    public boolean canIGo(){
-        if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() >= vehicleQueue.size()-1) return true;
+    public void canIGo(){
+        if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() >= vehicleQueue.size()) return;
         List<Vechicle> onTheIntersection = new ArrayList<>();
         vehicleQueue.values().forEach(q -> {
             if (!q.isEmpty()){
@@ -138,13 +140,13 @@ public class Intersection extends Actor {
         });
         if (onTheIntersection.size() == 1) {
             Vechicle tmp = onTheIntersection.get(0);
+            System.out.println("tukaj" + tmp.getRoute().peek().getId());
             vehicleQueue.get(tmp.getRoute().peek().getId()).remove(tmp);
-            tmp.setRiding(true);
-            return true;
+            tmp.nextRoad();
+            //tmp.setRiding(true);
         }
 
 
-        return false;
     }
 
     public void arrived(int roadID, Vechicle car) throws InterruptedException {

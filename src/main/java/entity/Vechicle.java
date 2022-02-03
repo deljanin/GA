@@ -63,7 +63,7 @@ public class Vechicle extends Actor{
             isRiding = false;
             sim.getIntersection(currentRoad.getEnd().getId()).arrived(currentRoad.getId(), this);
             // I don't know if this is correct it just feels like it is
-            if (isRiding) nextRoad();
+            //if (isRiding) nextRoad();
         } else {
             if (dNext > 0) next=true;
             // dobimo trenutne koordinate tako, da množimo steps z elapsed time z one Step
