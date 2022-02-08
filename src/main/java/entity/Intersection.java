@@ -129,7 +129,7 @@ public class Intersection extends Actor {
     }
 
     public void canIGo(){
-        if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() >= vehicleQueue.size()) return;
+        if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() == vehicleQueue.size()) return;
         List<Vechicle> onTheIntersection = new ArrayList<>();
         vehicleQueue.values().forEach(q -> {
             if (!q.isEmpty()){
@@ -140,11 +140,26 @@ public class Intersection extends Actor {
         });
         if (onTheIntersection.size() == 1) {
             Vechicle tmp = onTheIntersection.get(0);
-            System.out.println("tukaj" + tmp.getRoute().peek().getId());
+            System.out.println("tukaj: " + tmp.getRoute().peek().getId());
             vehicleQueue.get(tmp.getRoute().peek().getId()).remove(tmp);
             tmp.nextRoad();
-            //tmp.setRiding(true);
+            tmp.setRiding(true);
+            return;
         }
+        if (!vehicleQueue.get(this.arc1).isEmpty() || !vehicleQueue.get(this.arc2).isEmpty()) {
+            Vechicle arc1Car = vehicleQueue.get(this.arc1).peek();
+            Vechicle arc2Car = vehicleQueue.get(this.arc2).peek();
+            if (arc1Car != null) {
+                arc1Car.nextRoad();
+                arc1Car.setRiding(true);
+            }
+            if (arc2Car != null) {
+                arc2Car.nextRoad();
+                arc2Car.setRiding(true);
+            }
+            return;
+        }
+        //if () <<<<< NO CAR ON PRIORITY ROAD AND MORE THEN ONE CAR ON THE INTERSECTION>>>>>
 
 
     }
@@ -152,6 +167,7 @@ public class Intersection extends Actor {
     public void arrived(int roadID, Vechicle car) throws InterruptedException {
         //System.out.println(car);
         vehicleQueue.get(roadID).put(car);
+        System.out.println(vehicleQueue.get(roadID).peek().isRiding());
     }
 }
 
