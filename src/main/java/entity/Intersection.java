@@ -16,6 +16,7 @@ public class Intersection extends Actor {
     private HashMap<Integer, Road> roadsIn;
     private HashMap<Integer, Road> roadsOut;
     private HashMap<Integer, BlockingQueue<Vechicle>> vehicleQueue;
+    private Vechicle[] roundabout;
 
     public HashMap<Integer, Road> getRoadsIn() {
         return roadsIn;
@@ -60,10 +61,10 @@ public class Intersection extends Actor {
     public void initialize(){
         vehicleQueue = new HashMap<Integer, BlockingQueue<Vechicle>>();
         roadsIn.values().forEach(road ->{
-            vehicleQueue.put(road.getId(), new LinkedBlockingQueue<>());
+            vehicleQueue.put(road.getEndArc(), new LinkedBlockingQueue<>());
             //System.out.println(road.getId());
         });
-
+        roundabout = new Vechicle[vehicleQueue.size()*3];
     }
 
     @Override
@@ -145,40 +146,70 @@ public class Intersection extends Actor {
                 if (onTheIntersection.size() == 1) {
                     Vechicle tmp = onTheIntersection.get(0);
                     System.out.println("tukaj: " + tmp.getRoute().peek().getId());
-                    vehicleQueue.get(tmp.getRoute().peek().getId()).remove(tmp);
+                    vehicleQueue.get(tmp.getRoute().peek().getEndArc()).remove(tmp);
                     tmp.nextRoad();
-                    tmp.setRiding(true);
                     return;
                 }
                 if (!vehicleQueue.get(this.arc1).isEmpty() || !vehicleQueue.get(this.arc2).isEmpty()) {
                     Vechicle arc1Car = vehicleQueue.get(this.arc1).peek();
                     Vechicle arc2Car = vehicleQueue.get(this.arc2).peek();
                     if (arc1Car != null) {
+                        vehicleQueue.get(arc1Car.getRoute().peek().getEndArc()).remove(arc1Car);
                         arc1Car.nextRoad();
-                        arc1Car.setRiding(true);
                     }
                     if (arc2Car != null) {
+                        vehicleQueue.get(arc2Car.getRoute().peek().getEndArc()).remove(arc2Car);
                         arc2Car.nextRoad();
-                        arc2Car.setRiding(true);
                     }
                     return;
                 }
-                //if () <<<<< NO CAR ON PRIORITY ROAD AND MORE THEN ONE CAR ON THE INTERSECTION>>>>>
+                //<<<<< NO CAR ON PRIORITY ROAD AND MORE THEN ONE CAR ON THE INTERSECTION>>>>>
+                onTheIntersection.forEach(x -> {
+                    if (!x.isAlreadyRemoved()) x.removeRoadWithoutMakingTheCarDrive();
+                });
+                int endArc = onTheIntersection.get(0).getRoute().peek().getStartArc();
+                if (onTheIntersection.stream().allMatch(x -> x.getRoute().peek().getStartArc() == endArc)){
+                    onTheIntersection.forEach(x ->{
+                        if (x.getComingFromArc() > endArc && endArc > x.getComingFromArc()/2){
+                            x.setRiding(true);
+                            vehicleQueue.get(x.getComingFromArc()).remove();
+                        }else x.setAlreadyRemoved(true);
+                    });
+                    return;
+                }
+                // If we come to here all the cars on the intersection can go
+                vehicleQueue.values().forEach(q ->{
+                    if (!q.isEmpty()) {
+                        q.peek().nextRoad();
+                        q.remove();
+                    }
+                });
                 break;
             //Roundabout
             case 2:
+
+                break;
+            //Semaphore
+            case 3:
+                break;
+            case 4:
+                vehicleQueue.values().forEach(q -> {
+                    if (!q.isEmpty()) {
+                        q.peek().nextRoad();
+                        q.remove();
+                        //if(v.getRoute().peek().getEndArc() == arc1) v.setRiding(true);
+                    }
+                });
                 break;
             default:
                 System.out.println("this shouldn't happen");
         }
-
-
     }
 
-    public void arrived(int roadID, Vechicle car) throws InterruptedException {
+    public void arrived(int roadEndArc, Vechicle car) throws InterruptedException {
         //System.out.println(car);
-        vehicleQueue.get(roadID).put(car);
-        System.out.println(vehicleQueue.get(roadID).peek().isRiding());
+        vehicleQueue.get(roadEndArc).put(car);
+        System.out.println(vehicleQueue.get(roadEndArc).peek().isRiding());
     }
 }
 

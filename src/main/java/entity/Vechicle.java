@@ -13,6 +13,8 @@ public class Vechicle extends Actor{
     private boolean isRiding = true;
     private boolean isFinished = false;
     private boolean next = false;
+    private int comingFromArc;
+    private boolean alreadyRemoved = false;
 
     public Vechicle(float speed, List<Road> route, Simulation simulation) {
         super(0,0, simulation);
@@ -31,6 +33,10 @@ public class Vechicle extends Actor{
 
     @Override
     public void tick(double elapsedTime) throws InterruptedException {
+        if (route.isEmpty()) {
+            isFinished = true;
+            isRiding = false;
+        }
         if (!isRiding || isFinished || route.isEmpty()) return;
         //dont be afraid of references
         Road currentRoad = route.peek();
@@ -61,7 +67,8 @@ public class Vechicle extends Actor{
         //If radius squared of the intersection is >= 0 then we are at the intersection...
         if (d > 0 || next) {
             isRiding = false;
-            sim.getIntersection(currentRoad.getEnd().getId()).arrived(currentRoad.getId(), this);
+            this.comingFromArc = getRoute().peek().getEndArc();
+            sim.getIntersection(currentRoad.getEnd().getId()).arrived(currentRoad.getEndArc(), this);
             // I don't know if this is correct it just feels like it is
             //if (isRiding) nextRoad();
         } else {
@@ -81,22 +88,25 @@ public class Vechicle extends Actor{
 
     public synchronized void nextRoad(){
         //System.out.println(route.peek());
-        if (route.size() > 1) {
+        if (route.size() >= 1) {
             this.x = route.peek().getEnd().x;
             this.y = route.peek().getEnd().y;
             route.remove();
             next=false;
         }
         isRiding = true;
-        if (route.isEmpty()) {
-            isFinished = true;
-            isRiding = false;
-        }
-
     }
 
     public float getSpeed() {
         return speed;
+    }
+
+    public int getComingFromArc() {
+        return comingFromArc;
+    }
+
+    public void setComingFromArc(int comingFromArc) {
+        this.comingFromArc = comingFromArc;
     }
 
     public void setSpeed(float speed) {
@@ -125,5 +135,18 @@ public class Vechicle extends Actor{
 
     public void setFinished(boolean finished) {
         isFinished = finished;
+    }
+
+    public void removeRoadWithoutMakingTheCarDrive(){
+        nextRoad();
+        isRiding = false;
+    }
+
+    public boolean isAlreadyRemoved() {
+        return alreadyRemoved;
+    }
+
+    public void setAlreadyRemoved(boolean alreadyRemoved) {
+        this.alreadyRemoved = alreadyRemoved;
     }
 }
