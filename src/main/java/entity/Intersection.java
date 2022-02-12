@@ -65,6 +65,9 @@ public class Intersection extends Actor {
             //System.out.println(road.getId());
         });
         roundabout = new Vechicle[vehicleQueue.size()*3];
+        for (int i = 0; i < roundabout.length-1; i++) {
+            roundabout[i] = null;
+        }
     }
 
     @Override
@@ -187,7 +190,48 @@ public class Intersection extends Actor {
                 break;
             //Roundabout
             case 2:
-
+                if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() == vehicleQueue.size()) return;
+                onTheIntersection = new ArrayList<>();
+                vehicleQueue.values().forEach(q -> {
+                    if (!q.isEmpty()) {
+                        Vechicle v = q.peek();
+                        onTheIntersection.add(v);
+                        //if(v.getRoute().peek().getEndArc() == arc1) v.setRiding(true);
+                    }
+                });
+                onTheIntersection.forEach(x -> {
+                    if (!x.isAlreadyRemoved()) x.removeRoadWithoutMakingTheCarDrive();
+                });
+                if (!(Arrays.stream(roundabout).allMatch(Objects::isNull))) shift();
+                for (int i = 0; i < roundabout.length; i++) {
+                    if (roundabout[i] == null) continue;
+                    if (i % 3 == 0) {
+                        if (roundabout[i].getRoute().isEmpty()) continue;
+                        if (i / 3 == roundabout[i].getRoute().peek().getStartArc()) {
+                            //vehicleQueue.get(roundabout[i].getComingFromArc()).remove();
+                            roundabout[i].setRiding(true);
+                        } else {
+                            if (i == 0) {
+                                roundabout[roundabout.length - 1] = roundabout[i];
+                            } else {
+                                roundabout[i - 1] = roundabout[i];
+                            }
+                        }
+                        roundabout[i] = null;
+                    }
+                }
+                onTheIntersection.forEach(x -> {
+                    int arc = x.getComingFromArc();
+                    int going = arc-1;
+                    int coming = arc+1;
+                    if (arc == 0){
+                        going = roundabout.length-1;
+                    }
+                    if (roundabout[coming] == null && roundabout[going] == null) {
+                        roundabout[going] = x;
+                        vehicleQueue.get(arc).remove();
+                    }
+                });
                 break;
             //Semaphore
             case 3:
@@ -210,6 +254,15 @@ public class Intersection extends Actor {
         //System.out.println(car);
         vehicleQueue.get(roadEndArc).put(car);
         System.out.println(vehicleQueue.get(roadEndArc).peek().isRiding());
+    }
+
+    private void shift(){
+        Vechicle temp=roundabout[0];
+        for(int i=0;i<roundabout.length-1;i++)
+        {
+            roundabout[i]=roundabout[i+1];
+        }
+        roundabout[roundabout.length-1]=temp;
     }
 }
 
