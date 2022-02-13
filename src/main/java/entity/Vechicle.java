@@ -15,6 +15,7 @@ public class Vechicle extends Actor{
     private boolean next = false;
     private int comingFromArc;
     private boolean alreadyRemoved = false;
+    private boolean inRoundabout = false;
 
     public Vechicle(float speed, List<Road> route, Simulation simulation) {
         super(0,0, simulation);
@@ -33,7 +34,7 @@ public class Vechicle extends Actor{
 
     @Override
     public void tick(double elapsedTime) throws InterruptedException {
-        if (route.isEmpty()) {
+        if (route.isEmpty() && !inRoundabout) {
             isFinished = true;
             isRiding = false;
         }
@@ -148,5 +149,13 @@ public class Vechicle extends Actor{
 
     public void setAlreadyRemoved(boolean alreadyRemoved) {
         this.alreadyRemoved = alreadyRemoved;
+    }
+
+    public boolean isInRoundabout() {
+        return inRoundabout;
+    }
+
+    public void setInRoundabout(boolean inRoundabout) {
+        this.inRoundabout = inRoundabout;
     }
 }

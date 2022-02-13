@@ -17,6 +17,8 @@ public class Intersection extends Actor {
     private HashMap<Integer, Road> roadsOut;
     private HashMap<Integer, BlockingQueue<Vechicle>> vehicleQueue;
     private Vechicle[] roundabout;
+    private int semaphoreTimer = 5;
+    private boolean semaphore = true;
 
     public HashMap<Integer, Road> getRoadsIn() {
         return roadsIn;
@@ -64,7 +66,7 @@ public class Intersection extends Actor {
             vehicleQueue.put(road.getEndArc(), new LinkedBlockingQueue<>());
             //System.out.println(road.getId());
         });
-        roundabout = new Vechicle[vehicleQueue.size()*3];
+        roundabout = new Vechicle[roadsIn.size()*3];
         for (int i = 0; i < roundabout.length-1; i++) {
             roundabout[i] = null;
         }
@@ -136,7 +138,7 @@ public class Intersection extends Actor {
         switch (type) {
             //Basic intersection
             case 1:
-                System.out.println("Number of roads on the intersection: " + this.id + " is " + vehicleQueue.size());
+                //System.out.println("Number of roads on the intersection: " + this.id + " is " + vehicleQueue.size());
                 if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() == vehicleQueue.size()) return;
                 List<Vechicle> onTheIntersection = new ArrayList<>();
                 vehicleQueue.values().forEach(q -> {
@@ -148,7 +150,7 @@ public class Intersection extends Actor {
                 });
                 if (onTheIntersection.size() == 1) {
                     Vechicle tmp = onTheIntersection.get(0);
-                    System.out.println("tukaj: " + tmp.getRoute().peek().getId());
+                    //System.out.println("tukaj: " + tmp.getRoute().peek().getId());
                     vehicleQueue.get(tmp.getRoute().peek().getEndArc()).remove(tmp);
                     tmp.nextRoad();
                     return;
@@ -209,6 +211,7 @@ public class Intersection extends Actor {
                         if (roundabout[i].getRoute().isEmpty()) continue;
                         if (i / 3 == roundabout[i].getRoute().peek().getStartArc()) {
                             //vehicleQueue.get(roundabout[i].getComingFromArc()).remove();
+                            roundabout[i].setInRoundabout(false);
                             roundabout[i].setRiding(true);
                         } else {
                             if (i == 0) {
@@ -222,19 +225,48 @@ public class Intersection extends Actor {
                 }
                 onTheIntersection.forEach(x -> {
                     int arc = x.getComingFromArc();
-                    int going = arc-1;
-                    int coming = arc+1;
-                    if (arc == 0){
+                    int going = arc*3-1;
+                    int coming = arc*3+1;
+                    if (arc*3 == 0){
                         going = roundabout.length-1;
                     }
+                    System.out.println("arc is: " + arc + " coming is: " + coming + " roundabout size is: " + roundabout.length + " intersection id is: " + this.id);
                     if (roundabout[coming] == null && roundabout[going] == null) {
                         roundabout[going] = x;
                         vehicleQueue.get(arc).remove();
+                        x.setInRoundabout(true);
                     }
                 });
                 break;
             //Semaphore
             case 3:
+                if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() == vehicleQueue.size()) return;
+                onTheIntersection = new ArrayList<>();
+                vehicleQueue.values().forEach(q -> {
+                    if (!q.isEmpty()) {
+                        Vechicle v = q.peek();
+                        onTheIntersection.add(v);
+                        //if(v.getRoute().peek().getEndArc() == arc1) v.setRiding(true);
+                    }
+                });
+                onTheIntersection.forEach(x -> {
+                    if (semaphore) {
+                        if (x.getComingFromArc() % 2 == 0) {
+                            x.setRiding(true);
+                            vehicleQueue.get(x.getComingFromArc()).remove();
+                        }
+                    }else {
+                        if (x.getComingFromArc() % 2 == 1) {
+                            x.setRiding(true);
+                            vehicleQueue.get(x.getComingFromArc()).remove();
+                        }
+                    }
+                });
+                semaphoreTimer--;
+                if (semaphoreTimer == 0) {
+                    semaphoreTimer = 5;
+                    semaphore = !semaphore;
+                }
                 break;
             case 4:
                 vehicleQueue.values().forEach(q -> {
@@ -253,10 +285,11 @@ public class Intersection extends Actor {
     public void arrived(int roadEndArc, Vechicle car) throws InterruptedException {
         //System.out.println(car);
         vehicleQueue.get(roadEndArc).put(car);
-        System.out.println(vehicleQueue.get(roadEndArc).peek().isRiding());
+        //System.out.println(vehicleQueue.get(roadEndArc).peek().isRiding());
     }
 
     private void shift(){
+        System.out.println("SHIFTING");
         Vechicle temp=roundabout[0];
         for(int i=0;i<roundabout.length-1;i++)
         {
