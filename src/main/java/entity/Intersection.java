@@ -151,7 +151,7 @@ public class Intersection extends Actor {
                 if (onTheIntersection.size() == 1) {
                     Vechicle tmp = onTheIntersection.get(0);
                     //System.out.println("tukaj: " + tmp.getRoute().peek().getId());
-                    vehicleQueue.get(tmp.getRoute().peek().getEndArc()).remove(tmp);
+                    vehicleQueue.get(tmp.getComingFromArc()).remove();
                     tmp.nextRoad();
                     return;
                 }
@@ -250,17 +250,19 @@ public class Intersection extends Actor {
                     }
                 });
                 onTheIntersection.forEach(x -> {
-                    if (semaphore) {
-                        if (x.getComingFromArc() % 2 == 0) {
-                            x.setRiding(true);
-                            vehicleQueue.get(x.getComingFromArc()).remove();
+                    //if (x != null) {
+                        if (semaphore) {
+                            if (x.getComingFromArc() % 2 == 0) {
+                                x.setRiding(true);
+                                vehicleQueue.get(x.getComingFromArc()).remove();
+                            }
+                        } else {
+                            if (x.getComingFromArc() % 2 == 1) {
+                                x.setRiding(true);
+                                vehicleQueue.get(x.getComingFromArc()).remove();
+                            }
                         }
-                    }else {
-                        if (x.getComingFromArc() % 2 == 1) {
-                            x.setRiding(true);
-                            vehicleQueue.get(x.getComingFromArc()).remove();
-                        }
-                    }
+                    //}
                 });
                 semaphoreTimer--;
                 if (semaphoreTimer == 0) {
@@ -268,7 +270,7 @@ public class Intersection extends Actor {
                     semaphore = !semaphore;
                 }
                 break;
-            case 4:
+            case 0:
                 vehicleQueue.values().forEach(q -> {
                     if (!q.isEmpty()) {
                         q.peek().nextRoad();
