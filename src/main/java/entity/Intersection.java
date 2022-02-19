@@ -135,12 +135,13 @@ public class Intersection extends Actor {
     }
 
     public void canIGo(){
+        List<Vechicle> onTheIntersection;
         switch (type) {
             //Basic intersection
             case 1:
                 //System.out.println("Number of roads on the intersection: " + this.id + " is " + vehicleQueue.size());
                 if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() == vehicleQueue.size()) return;
-                List<Vechicle> onTheIntersection = new ArrayList<>();
+                onTheIntersection = new ArrayList<>();
                 vehicleQueue.values().forEach(q -> {
                     if (!q.isEmpty()) {
                         Vechicle v = q.peek();
@@ -250,7 +251,7 @@ public class Intersection extends Actor {
                     }
                 });
                 onTheIntersection.forEach(x -> {
-                    //if (x != null) {
+                    if (x != null) {
                         if (semaphore) {
                             if (x.getComingFromArc() % 2 == 0) {
                                 x.setRiding(true);
@@ -262,7 +263,7 @@ public class Intersection extends Actor {
                                 vehicleQueue.get(x.getComingFromArc()).remove();
                             }
                         }
-                    //}
+                    }
                 });
                 semaphoreTimer--;
                 if (semaphoreTimer == 0) {
