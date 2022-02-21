@@ -103,7 +103,7 @@ public class Network {
             //Why do routes always generate in the same way?
             DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);   // test z enim avtkom, ali je pravilno da tukaj definiramo poti in naredimo vse avte?
             Random rnd = new Random(5);
-            for (int i = 0; i < 500; i++) {
+            for (int i = 0; i < 5; i++) {
                 Collections.shuffle(parking);
                 List<Road> route = dijkstraShortestPath.getPath(parking.getFirst(), parking.getLast()).getEdgeList();
                 //debug print of roads7

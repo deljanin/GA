@@ -254,11 +254,15 @@ public class Intersection extends Actor {
                     if (x != null) {
                         if (semaphore) {
                             if (x.getComingFromArc() % 2 == 0) {
+                                System.out.println("Even arcs can go! " + semaphore);
+                                System.out.println("Coming from arc is: " + x.getComingFromArc());
                                 x.setRiding(true);
+                                System.out.println("Is the car finished? " + vehicleQueue.get(x.getComingFromArc()).peek().isFinished());
                                 vehicleQueue.get(x.getComingFromArc()).remove();
                             }
                         } else {
                             if (x.getComingFromArc() % 2 == 1) {
+                                System.out.println("Odd arcs can go! " + semaphore);
                                 x.setRiding(true);
                                 vehicleQueue.get(x.getComingFromArc()).remove();
                             }
@@ -267,6 +271,7 @@ public class Intersection extends Actor {
                 });
                 semaphoreTimer--;
                 if (semaphoreTimer == 0) {
+                    System.out.println("SemaphoreTimer was 0!" + semaphoreTimer);
                     semaphoreTimer = 5;
                     semaphore = !semaphore;
                 }
