@@ -69,7 +69,7 @@ public class Vechicle extends Actor{
         if (d > 0 || next) {
             isRiding = false;
             this.comingFromArc = getRoute().peek().getEndArc();
-            sim.getIntersection(currentRoad.getEnd().getId()).arrived(currentRoad.getEndArc(), this);
+            sim.getIntersection(currentRoad.getEnd().getId()).arrived(this.comingFromArc, this);
             // I don't know if this is correct it just feels like it is
             //if (isRiding) nextRoad();
         } else {
