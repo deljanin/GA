@@ -103,9 +103,12 @@ public class Intersection extends Actor {
         }
     }
 
-    public void canIGo(){
+    public synchronized void canIGo(){
         List<Vechicle> onTheIntersection;
-        if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() == vehicleQueue.size()) return;
+        if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() == vehicleQueue.size()) {
+            //System.out.println("No car on the intersection");
+            return;
+        }
         onTheIntersection = new ArrayList<Vechicle>();
         LinkedBlockingQueue[] test = vehicleQueue.values().toArray( new LinkedBlockingQueue[]{});
         for (LinkedBlockingQueue linkedBlockingQueue : test) {
@@ -117,9 +120,6 @@ public class Intersection extends Actor {
             //Basic intersection
             case 1:
                 if (onTheIntersection.size() == 1) {
-                    if (onTheIntersection.get(0) == null) return;
-                    if(vehicleQueue.get(onTheIntersection.get(0).getComingFromArc()).isEmpty()) return;
-
                     vehicleQueue.get(onTheIntersection.get(0).getComingFromArc()).remove();
                     onTheIntersection.get(0).nextRoad();
                     return;
@@ -146,19 +146,20 @@ public class Intersection extends Actor {
                 int endArc = onTheIntersection.get(0).getRoute().peek().getStartArc();
                 if (onTheIntersection.stream().allMatch(x -> x.getRoute().peek().getStartArc() == endArc)){
                     onTheIntersection.forEach(x ->{
-                        if (x.getComingFromArc() > endArc && endArc > x.getComingFromArc()/2){
-                            x.setRiding(true);
+                        if (x.getComingFromArc() == 0 && endArc == 3) {
                             vehicleQueue.get(x.getComingFromArc()).remove();
+                            x.setRiding(true);
+                        }else if (endArc == x.getComingFromArc() -1){
+                            vehicleQueue.get(x.getComingFromArc()).remove();
+                            x.setRiding(true);
                         }else x.setAlreadyRemoved(true);
                     });
                     return;
                 }
                 // If we come to here all the cars on the intersection can go
-                vehicleQueue.values().forEach(q ->{
-                    if (!q.isEmpty()) {
-                        q.peek().nextRoad();
-                        q.remove();
-                    }
+                onTheIntersection.forEach(v ->{
+                    vehicleQueue.get(v.getComingFromArc()).remove();
+                    v.setRiding(true);
                 });
                 break;
             //Roundabout
@@ -167,7 +168,7 @@ public class Intersection extends Actor {
                     if (!x.isAlreadyRemoved()) x.removeRoadWithoutMakingTheCarDrive();
                 });
                 if (!(Arrays.stream(roundabout).allMatch(Objects::isNull))) shift();
-                for (int i = 0; i < roundabout.length; i++) {
+                for (int i = 0; i < roundabout.length-1; i++) {
                     if (roundabout[i] == null) continue;
                     if (i % 3 == 0) {
                         if (i / 3 == roundabout[i].getRoute().peek().getStartArc()) {
@@ -198,13 +199,13 @@ public class Intersection extends Actor {
                     if (x != null) {
                         if (semaphore) {
                             if (x.getComingFromArc() % 2 == 0) {
-                                x.setRiding(true);
                                 vehicleQueue.get(x.getComingFromArc()).remove();
+                                x.setRiding(true);
                             }
                         } else {
                             if (x.getComingFromArc() % 2 == 1) {
-                                x.setRiding(true);
                                 vehicleQueue.get(x.getComingFromArc()).remove();
+                                x.setRiding(true);
                             }
                         }
                     }
