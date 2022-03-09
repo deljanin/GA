@@ -64,7 +64,6 @@ public class Intersection extends Actor {
         vehicleQueue = new HashMap<Integer, BlockingQueue<Vechicle>>();
         roadsIn.values().forEach(road ->{
             vehicleQueue.put(road.getEndArc(), new LinkedBlockingQueue<>());
-            //System.out.println(road.getId());
         });
 
         int max = 0;
@@ -138,7 +137,6 @@ public class Intersection extends Actor {
                 onTheIntersection.forEach(x -> {
                     if (!x.isAlreadyRemoved()) x.removeRoadWithoutMakingTheCarDrive();
                 });
-                System.out.println("OnTheIntersection size: " + onTheIntersection.size());
                 if (onTheIntersection.get(0).getRoute().isEmpty()) return;  //this means this is the last intersection of the vehicles route...
                 int endArc = onTheIntersection.get(0).getRoute().peek().getStartArc();
                 if (onTheIntersection.stream().allMatch(x -> x.getRoute().peek().getStartArc() == endArc)){
@@ -169,7 +167,6 @@ public class Intersection extends Actor {
                     if (roundabout[i] == null) continue;
                     if (i % 3 == 0) {
                         if (i / 3 == roundabout[i].getRoute().peek().getStartArc()) {
-                            //System.out.println("exiting roundabout");
                             roundabout[i].setInRoundabout(false);
                             roundabout[i].setRiding(true);
                             roundabout[i] = null;
@@ -185,7 +182,6 @@ public class Intersection extends Actor {
                         going = roundabout.length-1;
                     }
                     if (roundabout[coming] == null && roundabout[going] == null && roundabout[entrance] == null) {
-                        //System.out.println("got into the roundabout");
                         roundabout[going] = x;
                         vehicleQueue.get(arc).remove();
                         x.setInRoundabout(true);
@@ -194,10 +190,7 @@ public class Intersection extends Actor {
                 break;
             //Semaphore
             case 2:
-                //System.out.println("semaphore case");
-                //System.out.println("semaphore type is " + type);
                 if (semaphore) {
-                    System.out.println("even arc can go");
                     onTheIntersection.forEach(x -> {
                         if (x != null) {
                             if (x.getComingFromArc() % 2 == 0) {
@@ -207,7 +200,6 @@ public class Intersection extends Actor {
                         }
                     });
                 } else {
-                    System.out.println("odd arc can go");
                     onTheIntersection.forEach(x -> {
                         if (x != null) {
                             if (x.getComingFromArc() % 2 == 1) {
@@ -219,7 +211,6 @@ public class Intersection extends Actor {
                 }
                 semaphoreTimer--;
                 if (semaphoreTimer == 0) {
-                    System.out.println("timer ran out");
                     semaphoreTimer = 5;
                     semaphore = !semaphore;
                 }
