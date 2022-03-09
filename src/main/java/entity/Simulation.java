@@ -93,17 +93,17 @@ public class Simulation extends Canvas implements Runnable {
 
     private void tick(double elapsedTime) {
         this.ticks++;
+
         //let actors update them self
-        actors.removeAll(actors.stream().filter(actor -> actor.getClass() == Vechicle.class).filter(actor -> ((Vechicle) actor).isFinished()).collect(Collectors.toSet()));
-
-
-        actors.forEach(actor -> {
+        actors.stream().forEach(actor -> {
             try {
                 actor.tick(elapsedTime);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
+
+        actors.removeAll(actors.stream().filter(actor -> actor.getClass() == Vechicle.class).filter(actor -> ((Vechicle) actor).isFinished()).collect(Collectors.toSet()));
 //        Use something similar with filter to only do tick for !isFinished
 //        List<Vechicle> vehicles = new ArrayList<>();
 //
@@ -124,7 +124,7 @@ public class Simulation extends Canvas implements Runnable {
 
         graphics.drawImage(cityImage,0,0,null);
         //i let all actors render them self
-        actors.forEach(actor -> actor.render(graphics, elapsedTime));
+        actors.stream().forEach(actor -> actor.render(graphics, elapsedTime));
         graphics.dispose();
         bs.show();
     }
