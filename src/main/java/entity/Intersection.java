@@ -47,7 +47,7 @@ public class Intersection extends Actor {
     @Override
     public void tick(double elapsedTime) {
         canIGo();
-        //move my x, and y according to speed, and drawOvalelapsedTime
+        //move my x, and y according to speed, and drawOval elapsedTime
     }
 
     public Intersection(IntersectionData intersectionData, Simulation simulation) {
@@ -105,10 +105,7 @@ public class Intersection extends Actor {
 
     public synchronized void canIGo(){
         List<Vechicle> onTheIntersection;
-        if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() == vehicleQueue.size()) {
-            //System.out.println("No car on the intersection");
-            return;
-        }
+        if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() == vehicleQueue.size() && type != 3) return;
         onTheIntersection = new ArrayList<Vechicle>();
         LinkedBlockingQueue[] test = vehicleQueue.values().toArray( new LinkedBlockingQueue[]{});
         for (LinkedBlockingQueue linkedBlockingQueue : test) {
@@ -172,6 +169,7 @@ public class Intersection extends Actor {
                     if (roundabout[i] == null) continue;
                     if (i % 3 == 0) {
                         if (i / 3 == roundabout[i].getRoute().peek().getStartArc()) {
+                            //System.out.println("exiting roundabout");
                             roundabout[i].setInRoundabout(false);
                             roundabout[i].setRiding(true);
                             roundabout[i] = null;
@@ -187,6 +185,7 @@ public class Intersection extends Actor {
                         going = roundabout.length-1;
                     }
                     if (roundabout[coming] == null && roundabout[going] == null && roundabout[entrance] == null) {
+                        //System.out.println("got into the roundabout");
                         roundabout[going] = x;
                         vehicleQueue.get(arc).remove();
                         x.setInRoundabout(true);
@@ -195,26 +194,31 @@ public class Intersection extends Actor {
                 break;
             //Semaphore
             case 2:
+                //System.out.println("semaphore case");
+                //System.out.println("semaphore type is " + type);
                 onTheIntersection.forEach(x -> {
                     if (x != null) {
                         if (semaphore) {
                             if (x.getComingFromArc() % 2 == 0) {
+                                System.out.println("even arc can go");
                                 vehicleQueue.get(x.getComingFromArc()).remove();
                                 x.setRiding(true);
                             }
                         } else {
                             if (x.getComingFromArc() % 2 == 1) {
+                                System.out.println("odd arc can go");
                                 vehicleQueue.get(x.getComingFromArc()).remove();
                                 x.setRiding(true);
                             }
                         }
                     }
                 });
-                semaphoreTimer--;
                 if (semaphoreTimer == 0) {
+                    System.out.println("timer ran out");
                     semaphoreTimer = 5;
                     semaphore = !semaphore;
                 }
+                semaphoreTimer--;
                 break;
             case 0:
                 vehicleQueue.values().forEach(q -> {
@@ -234,6 +238,7 @@ public class Intersection extends Actor {
     }
 
     private void shift(){
+        //System.out.println("shifting");
         Vechicle temp=roundabout[0];
         System.arraycopy(roundabout, 1, roundabout, 0, roundabout.length - 1);
         roundabout[roundabout.length-1]=temp;

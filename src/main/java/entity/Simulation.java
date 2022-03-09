@@ -35,10 +35,10 @@ public class Simulation extends Canvas implements Runnable {
         network = new Network("intersections.json", "roads.json", this);
         network.initialize();
         //populate intersection
-        network.getIntersectionMap().values().forEach(intersection -> actors.add(intersection));
+        actors.addAll(network.getIntersectionMap().values());
         //populate roads
-        network.getRoadMap().values().forEach(road -> actors.add(road));
-        network.getCars().forEach(car -> actors.add(car));// Add all cars to simulation
+        actors.addAll(network.getRoadMap().values());
+        actors.addAll(network.getCars());// Add all cars to simulation
 
         actors.forEach(actor -> actor.sim = this);//Add this simulation reference to all actors
 
@@ -97,7 +97,7 @@ public class Simulation extends Canvas implements Runnable {
         actors.removeAll(actors.stream().filter(actor -> actor.getClass() == Vechicle.class).filter(actor -> ((Vechicle) actor).isFinished()).collect(Collectors.toSet()));
 
 
-        actors.stream().forEach(actor -> {
+        actors.forEach(actor -> {
             try {
                 actor.tick(elapsedTime);
             } catch (InterruptedException e) {
@@ -124,7 +124,7 @@ public class Simulation extends Canvas implements Runnable {
 
         graphics.drawImage(cityImage,0,0,null);
         //i let all actors render them self
-        actors.stream().forEach(actor -> actor.render(graphics, elapsedTime));
+        actors.forEach(actor -> actor.render(graphics, elapsedTime));
         graphics.dispose();
         bs.show();
     }
