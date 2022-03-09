@@ -196,29 +196,33 @@ public class Intersection extends Actor {
             case 2:
                 //System.out.println("semaphore case");
                 //System.out.println("semaphore type is " + type);
-                onTheIntersection.forEach(x -> {
-                    if (x != null) {
-                        if (semaphore) {
+                if (semaphore) {
+                    System.out.println("even arc can go");
+                    onTheIntersection.forEach(x -> {
+                        if (x != null) {
                             if (x.getComingFromArc() % 2 == 0) {
-                                System.out.println("even arc can go");
                                 vehicleQueue.get(x.getComingFromArc()).remove();
-                                x.setRiding(true);
-                            }
-                        } else {
-                            if (x.getComingFromArc() % 2 == 1) {
-                                System.out.println("odd arc can go");
-                                vehicleQueue.get(x.getComingFromArc()).remove();
-                                x.setRiding(true);
+                                x.nextRoad();
                             }
                         }
-                    }
-                });
+                    });
+                } else {
+                    System.out.println("odd arc can go");
+                    onTheIntersection.forEach(x -> {
+                        if (x != null) {
+                            if (x.getComingFromArc() % 2 == 1) {
+                                vehicleQueue.get(x.getComingFromArc()).remove();
+                                x.nextRoad();
+                            }
+                        }
+                    });
+                }
+                semaphoreTimer--;
                 if (semaphoreTimer == 0) {
                     System.out.println("timer ran out");
                     semaphoreTimer = 5;
                     semaphore = !semaphore;
                 }
-                semaphoreTimer--;
                 break;
             case 0:
                 vehicleQueue.values().forEach(q -> {
