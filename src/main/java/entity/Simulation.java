@@ -104,6 +104,7 @@ public class Simulation extends Canvas implements Runnable {
         });
 
         actors.removeAll(actors.stream().filter(actor -> actor.getClass() == Vechicle.class).filter(actor -> ((Vechicle) actor).isFinished()).collect(Collectors.toSet()));
+        if(actors.stream().noneMatch(actor -> actor.getClass() == Vechicle.class)) System.exit(0);
 //        Use something similar with filter to only do tick for !isFinished
 //        List<Vechicle> vehicles = new ArrayList<>();
 //

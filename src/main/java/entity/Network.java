@@ -93,7 +93,7 @@ public class Network {
             //fixed?: System.out.println(roads.get(1).getLength());   //  problem da graf ne mappa length --> weight
 
 
-            LinkedList<Intersection> parking = intersectionMap.values().stream().filter(intersection -> intersection.getType() == 1).collect(Collectors.toCollection(LinkedList::new));
+            LinkedList<Intersection> parking = intersectionMap.values().stream().filter(intersection -> intersection.getType() == 0).collect(Collectors.toCollection(LinkedList::new));
 //            for (Intersection x:intersectionMap.values().stream().filter()) {
 //                if (x.getType() == 3){
 //                    parking.add(x);
@@ -104,7 +104,7 @@ public class Network {
             //Why do routes always generate in the same way?
             DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);   // test z enim avtkom, ali je pravilno da tukaj definiramo poti in naredimo vse avte?
             Random rnd = new Random(5);
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 50; i++) {
                 Collections.shuffle(parking);
                 List<Road> route = dijkstraShortestPath.getPath(parking.getFirst(), parking.getLast()).getEdgeList();
                 //debug print of roads7
