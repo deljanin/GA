@@ -102,16 +102,10 @@ public class Simulation extends Canvas implements Runnable {
                 e.printStackTrace();
             }
         });
-
-        actors.removeAll(actors.stream().filter(actor -> actor.getClass() == Vechicle.class).filter(actor -> ((Vechicle) actor).isFinished()).collect(Collectors.toSet()));
+        // this is the stream() error line 106
+        //actors.removeAll(actors.stream().filter(actor -> actor.getClass() == Vechicle.class).filter(actor -> ((Vechicle) actor).isFinished()).collect(Collectors.toSet()));
         if(actors.stream().noneMatch(actor -> actor.getClass() == Vechicle.class)) System.exit(0);
-//        Use something similar with filter to only do tick for !isFinished
-//        List<Vechicle> vehicles = new ArrayList<>();
-//
-//        actors.stream().filter(actor -> actor.getClass() == Vechicle.class ).collect(Collectors.toSet()).stream().forEach(actor -> {
-//            vehicles.add((Vechicle) actor);
-//        });
-//        System.out.println(vehicles.stream().filter(vechicle -> vechicle.isRiding()).count());
+
     }
 
     private void render(double elapsedTime) {
@@ -129,10 +123,6 @@ public class Simulation extends Canvas implements Runnable {
         graphics.dispose();
         bs.show();
     }
-
-    //public Coordinates getXY(int intersectionId){
-    //    return network.getXY(intersectionId);
-   // }
 
     public Intersection getIntersection(int id){
         return network.getIntersectionMap().get(id);

@@ -77,9 +77,6 @@ public class Intersection extends Actor {
             if (road.getStartArc() > max) max = road.getStartArc();
         }
         roundabout = new Vechicle[(max+1)*3];
-        /*for (int i = 0; i < roundabout.length-1; i++) {
-            roundabout[i] = null;
-        }*/
     }
 
     @Override
@@ -116,7 +113,8 @@ public class Intersection extends Actor {
             //Basic intersection
             case 1:
                 if (onTheIntersection.size() == 1) {
-                    vehicleQueue.get(onTheIntersection.get(0).getComingFromArc()).remove();
+                    vehicleQueue.get(onTheIntersection.get(0).getComingFromArc()).remove(); // this throws noSuchElement I think the tick is so fast it comes to this before the last tick removes it, so it tries to remove the element from an empty queue
+                    onTheIntersection.get(0).setAlreadyRemoved(false);
                     onTheIntersection.get(0).nextRoad();
                     return;
                 }
@@ -162,6 +160,33 @@ public class Intersection extends Actor {
                     v.setRiding(true);
                 });
                 break;
+            //Semaphore
+            case 2:
+                if (semaphore) {
+                    onTheIntersection.forEach(x -> {
+                        if (x != null) {
+                            if (x.getComingFromArc() % 2 == 0) {
+                                vehicleQueue.get(x.getComingFromArc()).remove();
+                                x.nextRoad();
+                            }
+                        }
+                    });
+                } else {
+                    onTheIntersection.forEach(x -> {
+                        if (x != null) {
+                            if (x.getComingFromArc() % 2 == 1) {
+                                vehicleQueue.get(x.getComingFromArc()).remove();
+                                x.nextRoad();
+                            }
+                        }
+                    });
+                }
+                semaphoreTimer--;
+                if (semaphoreTimer == 0) {
+                    semaphoreTimer = 5;
+                    semaphore = !semaphore;
+                }
+                break;
             //Roundabout
             case 3:
                 onTheIntersection.forEach(x -> {
@@ -196,33 +221,6 @@ public class Intersection extends Actor {
                         x.setAlreadyRemoved(false);
                     }
                 });
-                break;
-            //Semaphore
-            case 2:
-                if (semaphore) {
-                    onTheIntersection.forEach(x -> {
-                        if (x != null) {
-                            if (x.getComingFromArc() % 2 == 0) {
-                                vehicleQueue.get(x.getComingFromArc()).remove();
-                                x.nextRoad();
-                            }
-                        }
-                    });
-                } else {
-                    onTheIntersection.forEach(x -> {
-                        if (x != null) {
-                            if (x.getComingFromArc() % 2 == 1) {
-                                vehicleQueue.get(x.getComingFromArc()).remove();
-                                x.nextRoad();
-                            }
-                        }
-                    });
-                }
-                semaphoreTimer--;
-                if (semaphoreTimer == 0) {
-                    semaphoreTimer = 5;
-                    semaphore = !semaphore;
-                }
                 break;
             case 0:
                 vehicleQueue.values().forEach(q -> {
