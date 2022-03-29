@@ -84,9 +84,9 @@ public class Intersection extends Actor {
     public void render(Graphics graphics, double elapsedTime) {
         //render at x,y. use elapsedTime where animations are needed (likely never)
         graphics.setColor(getColor());
-        if(this.id == 20){
+        /*if(this.id == 20){
             graphics.setColor(new Color(0x00FF32));
-         }
+         }*/
         graphics.fillOval((int) this.x, (int) this.y, 10, 10);
     }
 
@@ -173,7 +173,7 @@ public class Intersection extends Actor {
                 }
                 semaphoreTimer--;
                 if (semaphoreTimer == 0) {
-                    semaphoreTimer = 5;
+                    semaphoreTimer = 40;
                     semaphore = !semaphore;
                 }
                 break;
@@ -184,7 +184,6 @@ public class Intersection extends Actor {
                     if (roundabout[i] == null) continue;
                     if (i % 3 == 0) {
                         if (i / 3 == roundabout[i].getRoute().peek().getStartArc()) {
-                            roundabout[i].setInRoundabout(false);
                             roundabout[i].setRiding(true);
                             roundabout[i] = null;
                         }
@@ -200,7 +199,6 @@ public class Intersection extends Actor {
                     }
                     if (roundabout[coming] == null && roundabout[going] == null && roundabout[entrance] == null) {
                         roundabout[going] = x;
-                        x.setInRoundabout(true);
                         vehicleQueue.get(arc).remove();
                     }
                 });
@@ -208,6 +206,7 @@ public class Intersection extends Actor {
             case 0:
                 vehicleQueue.values().forEach(q -> {
                     if (!q.isEmpty()) {
+                        q.peek().setRiding(true);
                         if (q.peek().getRoute().isEmpty()) {
                             q.peek().setRiding(false);
                             q.peek().setFinished(true);

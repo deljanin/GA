@@ -103,7 +103,7 @@ public class Simulation extends Canvas implements Runnable {
         if(actors.stream().filter(actor -> actor.getClass() == Vechicle.class).allMatch(vehicle -> ((Vechicle) vehicle).isFinished())){
             System.out.println("Simulation finished in: " + ticks);
             System.exit(0);
-        }
+        }else System.out.println("How many cars haven't finished yet: " + actors.stream().filter(a -> a.getClass() == Vechicle.class && !((Vechicle) a).isFinished()).count());
     }
 
     private void render(double elapsedTime) {

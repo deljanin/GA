@@ -14,7 +14,6 @@ public class Vechicle extends Actor{
     private boolean isFinished = false;
     private boolean next = false;
     private int comingFromArc;
-    private boolean inRoundabout = false;
 
     public Vechicle(float speed, List<Road> route, Simulation simulation) {
         super(0,0, simulation);
@@ -37,7 +36,7 @@ public class Vechicle extends Actor{
             isRiding = false;
             isFinished = true;
         }
-        if (!isRiding || isFinished || inRoundabout) return;
+        if (!isRiding || isFinished) return;
         //dont be afraid of references
         Road currentRoad = route.peek();
 
@@ -67,8 +66,8 @@ public class Vechicle extends Actor{
         //If radius squared of the intersection is >= 0 then we are at the intersection...
         if (d > 0 || next) {
             isRiding = false;
-            this.comingFromArc = getRoute().peek().getEndArc();
-            nextRoad();
+            this.comingFromArc = currentRoad.getEndArc();
+             nextRoad();
             sim.getIntersection(currentRoad.getEndId()).arrived(this.comingFromArc, this);
         } else {
             if (dNext > 0) next=true;
@@ -133,14 +132,6 @@ public class Vechicle extends Actor{
         isFinished = finished;
     }
 
-    public boolean isInRoundabout() {
-        return inRoundabout;
-    }
-
-    public void setInRoundabout(boolean inRoundabout) {
-        this.inRoundabout = inRoundabout;
-    }
-
     @Override
     public String toString() {
         return "Vechicle{" +
@@ -149,7 +140,6 @@ public class Vechicle extends Actor{
                 ", isRiding=" + isRiding +
                 ", isFinished=" + isFinished +
                 ", comingFromArc=" + comingFromArc +
-                ", inRoundabout=" + inRoundabout +
                 ", id=" + this.hashCode() +
                 '}';
     }
