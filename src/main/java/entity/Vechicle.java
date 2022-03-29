@@ -70,14 +70,11 @@ public class Vechicle extends Actor{
             isRiding = false;
             this.comingFromArc = getRoute().peek().getEndArc();
             sim.getIntersection(currentRoad.getEnd().getId()).arrived(this.comingFromArc, this);
-            // I don't know if this is correct it just feels like it is
-            //if (isRiding) nextRoad();
         } else {
             if (dNext > 0) next=true;
             // dobimo trenutne koordinate tako, da množimo steps z elapsed time z one Step
             this.x = this.x + oneRealStepX;
             this.y = this.y + oneRealStepY;
-
         }
     }
     @Override

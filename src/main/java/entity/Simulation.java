@@ -35,10 +35,10 @@ public class Simulation extends Canvas implements Runnable {
         network = new Network("intersections.json", "roads.json", this);
         network.initialize();
         //populate intersection
-        network.getIntersectionMap().values().forEach(intersection -> actors.add(intersection));
+        actors.addAll(network.getIntersectionMap().values());
         //populate roads
-        network.getRoadMap().values().forEach(road -> actors.add(road));
-        network.getCars().forEach(car -> actors.add(car));// Add all cars to simulation
+        actors.addAll(network.getRoadMap().values());
+        actors.addAll(network.getCars());// Add all cars to simulation
 
         actors.forEach(actor -> actor.sim = this);//Add this simulation reference to all actors
 
@@ -93,10 +93,8 @@ public class Simulation extends Canvas implements Runnable {
 
     private void tick(double elapsedTime) {
         this.ticks++;
+
         //let actors update them self
-        actors.removeAll(actors.stream().filter(actor -> actor.getClass() == Vechicle.class).filter(actor -> ((Vechicle) actor).isFinished()).collect(Collectors.toSet()));
-
-
         actors.stream().forEach(actor -> {
             try {
                 actor.tick(elapsedTime);
@@ -104,13 +102,10 @@ public class Simulation extends Canvas implements Runnable {
                 e.printStackTrace();
             }
         });
-//        Use something similar with filter to only do tick for !isFinished
-//        List<Vechicle> vehicles = new ArrayList<>();
-//
-//        actors.stream().filter(actor -> actor.getClass() == Vechicle.class ).collect(Collectors.toSet()).stream().forEach(actor -> {
-//            vehicles.add((Vechicle) actor);
-//        });
-//        System.out.println(vehicles.stream().filter(vechicle -> vechicle.isRiding()).count());
+        // this is the stream() error line 106
+        //actors.removeAll(actors.stream().filter(actor -> actor.getClass() == Vechicle.class).filter(actor -> ((Vechicle) actor).isFinished()).collect(Collectors.toSet()));
+        if(actors.stream().noneMatch(actor -> actor.getClass() == Vechicle.class)) System.exit(0);
+
     }
 
     private void render(double elapsedTime) {
@@ -128,10 +123,6 @@ public class Simulation extends Canvas implements Runnable {
         graphics.dispose();
         bs.show();
     }
-
-    //public Coordinates getXY(int intersectionId){
-    //    return network.getXY(intersectionId);
-   // }
 
     public Intersection getIntersection(int id){
         return network.getIntersectionMap().get(id);
