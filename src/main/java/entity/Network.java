@@ -24,11 +24,13 @@ public class Network {
     private Graph<Intersection, Road> graph;
     private List<Vechicle> cars = new ArrayList<>();
     private Simulation simulation;
+    private Config config;
 
-    public Network(String intersections_file, String roads_file, Simulation simulation) {
+    public Network(String intersections_file, String roads_file, Simulation simulation, Config config) {
         this.intersections_file = intersections_file;
         this.roads_file = roads_file;
         this.simulation = simulation;
+        this.config = config;
     }
 
 
@@ -103,14 +105,16 @@ public class Network {
 
             //Why do routes always generate in the same way?
             DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);   // test z enim avtkom, ali je pravilno da tukaj definiramo poti in naredimo vse avte?
-            Random rnd = new Random(5);
-            for (int i = 0; i < 50; i++) {
+            Random rnd = new Random(config.seed);
+            for (int i = 0; i < config.numberOfVehicles; i++) {
                 Collections.shuffle(parking);
-                List<Road> route = dijkstraShortestPath.getPath(parking.getFirst(), parking.getLast()).getEdgeList();
+                List<Road> route;
+                while( (route = dijkstraShortestPath.getPath(parking.getFirst(), parking.getLast()).getEdgeList()).isEmpty()){
+                    Collections.shuffle(parking);
+                }
                 //debug print of roads7
                 //test.stream().forEach(road -> System.out.println(road));
                 Vechicle car = new Vechicle(14,route,simulation);
-
                 cars.add(car);             // list avtkov, ki jih vrnemo simulaciji
             }
 

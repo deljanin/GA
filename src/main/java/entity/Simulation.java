@@ -1,19 +1,18 @@
 package entity;
 
 import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Simulation extends Canvas implements Runnable {
@@ -32,7 +31,7 @@ public class Simulation extends Canvas implements Runnable {
             e.printStackTrace();
         }
         //not needed presently, will be useful to set up data structures, compute paths, etc..
-        network = new Network("intersections.json", "roads.json", this);
+        network = new Network("intersections.json", "roads.json", this, config);
         network.initialize();
         //populate intersection
         actors.addAll(network.getIntersectionMap().values());
@@ -77,8 +76,9 @@ public class Simulation extends Canvas implements Runnable {
             lastTime = now;
             while (delta >= 1) {
                 double slowdown = delta * config.simulationSpeed; //slowdown
+                ticks++;
                 tick(slowdown);
-                render(delta); //I cap render to 6FPS, ce hoces max fps gre render ven
+                render(delta); //I cap render to 60FPS, ce hoces max fps gre render ven
                 frames++;
 
                 if (System.currentTimeMillis() - timer > 1000) {
@@ -93,7 +93,6 @@ public class Simulation extends Canvas implements Runnable {
 
     private void tick(double elapsedTime) {
         this.ticks++;
-
         //let actors update them self
         actors.stream().forEach(actor -> {
             try {
@@ -102,10 +101,10 @@ public class Simulation extends Canvas implements Runnable {
                 e.printStackTrace();
             }
         });
-        // this is the stream() error line 106
-        //actors.removeAll(actors.stream().filter(actor -> actor.getClass() == Vechicle.class).filter(actor -> ((Vechicle) actor).isFinished()).collect(Collectors.toSet()));
-        if(actors.stream().noneMatch(actor -> actor.getClass() == Vechicle.class)) System.exit(0);
-
+        if(actors.stream().filter(actor -> actor.getClass() == Vechicle.class).allMatch(vehicle -> ((Vechicle) vehicle).isFinished())){
+            System.out.println("Simulation finished in: " + ticks);
+            System.exit(0);
+        }
     }
 
     private void render(double elapsedTime) {

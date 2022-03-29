@@ -155,4 +155,17 @@ public class Vechicle extends Actor{
     public void setInRoundabout(boolean inRoundabout) {
         this.inRoundabout = inRoundabout;
     }
+
+    @Override
+    public String toString() {
+        return "Vechicle{" +
+                "x=" + x +
+                ", y=" + y +
+                ", isRiding=" + isRiding +
+                ", isFinished=" + isFinished +
+                ", comingFromArc=" + comingFromArc +
+                ", inRoundabout=" + inRoundabout +
+                ", id=" + this.hashCode() +
+                '}';
+    }
 }
