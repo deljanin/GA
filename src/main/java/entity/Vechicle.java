@@ -14,7 +14,6 @@ public class Vechicle extends Actor{
     private boolean isFinished = false;
     private boolean next = false;
     private int comingFromArc;
-    private boolean alreadyRemoved = false;
     private boolean inRoundabout = false;
 
     public Vechicle(float speed, List<Road> route, Simulation simulation) {
@@ -34,11 +33,11 @@ public class Vechicle extends Actor{
 
     @Override
     public void tick(double elapsedTime) throws InterruptedException {
-        if (route.isEmpty() && !inRoundabout) {
-            isFinished = true;
+        if (route.isEmpty()) {
             isRiding = false;
+            isFinished = true;
         }
-        if (!isRiding || isFinished || route.isEmpty()) return;
+        if (!isRiding || isFinished || inRoundabout) return;
         //dont be afraid of references
         Road currentRoad = route.peek();
 
@@ -69,7 +68,8 @@ public class Vechicle extends Actor{
         if (d > 0 || next) {
             isRiding = false;
             this.comingFromArc = getRoute().peek().getEndArc();
-            sim.getIntersection(currentRoad.getEnd().getId()).arrived(this.comingFromArc, this);
+            nextRoad();
+            sim.getIntersection(currentRoad.getEndId()).arrived(this.comingFromArc, this);
         } else {
             if (dNext > 0) next=true;
             // dobimo trenutne koordinate tako, da množimo steps z elapsed time z one Step
@@ -85,14 +85,12 @@ public class Vechicle extends Actor{
     }
 
     public synchronized void nextRoad(){
-        //System.out.println(route.peek());
         if (route.size() >= 1) {
             this.x = route.peek().getEnd().x;
             this.y = route.peek().getEnd().y;
             route.remove();
             next=false;
         }
-        isRiding = true;
     }
 
     public float getSpeed() {
@@ -133,19 +131,6 @@ public class Vechicle extends Actor{
 
     public void setFinished(boolean finished) {
         isFinished = finished;
-    }
-
-    public void removeRoadWithoutMakingTheCarDrive(){
-        nextRoad();
-        isRiding = false;
-    }
-
-    public boolean isAlreadyRemoved() {
-        return alreadyRemoved;
-    }
-
-    public void setAlreadyRemoved(boolean alreadyRemoved) {
-        this.alreadyRemoved = alreadyRemoved;
     }
 
     public boolean isInRoundabout() {

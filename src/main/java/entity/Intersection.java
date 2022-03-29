@@ -1,7 +1,6 @@
 package entity;
 
 import data.IntersectionData;
-import services.VehicleEmitter;
 
 import java.awt.*;
 import java.util.*;
@@ -111,46 +110,35 @@ public class Intersection extends Actor {
         if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() == vehicleQueue.size() && type != 3)
             return;
         onTheIntersection = new ArrayList<Vechicle>();
-        LinkedBlockingQueue[] test = vehicleQueue.values().toArray(new LinkedBlockingQueue[]{});
-        for (LinkedBlockingQueue linkedBlockingQueue : test) {
-            if (!linkedBlockingQueue.isEmpty()) {
-                onTheIntersection.add((Vechicle) linkedBlockingQueue.peek());
-            }
-        }
+        vehicleQueue.values().forEach(q -> {
+            if (!q.isEmpty()) onTheIntersection.add(q.peek());
+        });
+
         switch (type) {
             //Basic intersection
             case 1:
                 if (onTheIntersection.size() == 1) {
-                    vehicleQueue.get(onTheIntersection.get(0).getComingFromArc()).remove(); // this throws noSuchElement I think the tick is so fast it comes to this before the last tick removes it, so it tries to remove the element from an empty queue
-                    onTheIntersection.get(0).setAlreadyRemoved(false);
-                    onTheIntersection.get(0).nextRoad();
+                    vehicleQueue.get(onTheIntersection.get(0).getComingFromArc()).remove();
+                    onTheIntersection.get(0).setRiding(true);
                     return;
                 }
                 if (!vehicleQueue.get(this.arc1).isEmpty() ) {
                     Vechicle arc1Car = vehicleQueue.get(this.arc1).peek();
                     if (arc1Car != null) {
                         vehicleQueue.get(arc1Car.getComingFromArc()).remove();
-                        arc1Car.nextRoad();
+                        arc1Car.setRiding(true);
                     }
                     return;
                 }
                 //<<<<< NO CAR ON PRIORITY ROAD AND MORE THAN ONE CAR ON THE INTERSECTION>>>>>
-                onTheIntersection.forEach(x -> {
-                    if (!x.isAlreadyRemoved()) {
-                        x.setAlreadyRemoved(true);
-                        x.removeRoadWithoutMakingTheCarDrive();
-                    }
-                });
                 int endArc = onTheIntersection.get(0).getRoute().peek().getStartArc();
                 if (onTheIntersection.stream().allMatch(x -> x.getRoute().peek().getStartArc() == endArc)) {
                     onTheIntersection.forEach(x -> {
                         if (x.getComingFromArc() == 0 && endArc == 3) {
                             vehicleQueue.get(x.getComingFromArc()).remove();
-                            x.setAlreadyRemoved(false);
                             x.setRiding(true);
                         } else if (endArc == x.getComingFromArc() - 1) {
                             vehicleQueue.get(x.getComingFromArc()).remove();
-                            x.setAlreadyRemoved(false);
                             x.setRiding(true);
                         }
                     });
@@ -159,7 +147,6 @@ public class Intersection extends Actor {
                 // If we come to here all the cars on the intersection can go
                 onTheIntersection.forEach(v -> {
                     vehicleQueue.get(v.getComingFromArc()).remove();
-                    v.setAlreadyRemoved(false);
                     v.setRiding(true);
                 });
                 break;
@@ -170,7 +157,7 @@ public class Intersection extends Actor {
                         if (x != null) {
                             if (x.getComingFromArc() % 2 == 0) {
                                 vehicleQueue.get(x.getComingFromArc()).remove();
-                                x.nextRoad();
+                                x.setRiding(true);
                             }
                         }
                     });
@@ -179,7 +166,7 @@ public class Intersection extends Actor {
                         if (x != null) {
                             if (x.getComingFromArc() % 2 == 1) {
                                 vehicleQueue.get(x.getComingFromArc()).remove();
-                                x.nextRoad();
+                                x.setRiding(true);
                             }
                         }
                     });
@@ -192,18 +179,11 @@ public class Intersection extends Actor {
                 break;
             //Roundabout
             case 3:
-                onTheIntersection.forEach(x -> {
-                    if (!x.isAlreadyRemoved()) {
-                        x.setAlreadyRemoved(true);
-                        x.removeRoadWithoutMakingTheCarDrive();
-                    }
-                });
                 if (!(Arrays.stream(roundabout).allMatch(Objects::isNull))) shift();
                 for (int i = 0; i < roundabout.length; i++) {
                     if (roundabout[i] == null) continue;
                     if (i % 3 == 0) {
                         if (i / 3 == roundabout[i].getRoute().peek().getStartArc()) {
-                            roundabout[i].setAlreadyRemoved(false);
                             roundabout[i].setInRoundabout(false);
                             roundabout[i].setRiding(true);
                             roundabout[i] = null;
@@ -220,16 +200,18 @@ public class Intersection extends Actor {
                     }
                     if (roundabout[coming] == null && roundabout[going] == null && roundabout[entrance] == null) {
                         roundabout[going] = x;
-                        vehicleQueue.get(arc).remove();
-                        x.setRiding(false);
                         x.setInRoundabout(true);
+                        vehicleQueue.get(arc).remove();
                     }
                 });
                 break;
             case 0:
                 vehicleQueue.values().forEach(q -> {
                     if (!q.isEmpty()) {
-                        q.peek().nextRoad();
+                        if (q.peek().getRoute().isEmpty()) {
+                            q.peek().setRiding(false);
+                            q.peek().setFinished(true);
+                        }
                         q.remove();
                     }
                 });
@@ -241,11 +223,10 @@ public class Intersection extends Actor {
     }
 
     public void arrived(int roadEndArc, Vechicle car) throws InterruptedException {
-        vehicleQueue.get(roadEndArc).put(car);
+        if (!car.isFinished()) vehicleQueue.get(roadEndArc).put(car);
     }
 
     private void shift() {
-        //System.out.println("shifting");
         Vechicle temp = roundabout[0];
         System.arraycopy(roundabout, 1, roundabout, 0, roundabout.length - 1);
         roundabout[roundabout.length - 1] = temp;

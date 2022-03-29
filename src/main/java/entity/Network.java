@@ -76,6 +76,7 @@ public class Network {
                     graph.setEdgeWeight(road, road.getLength());
 
                     //Adds incoming and outgoing roads of an intersections
+                    if (road.getEndId() == 42) System.out.println("Arcs on intersection 42: " + road.getEndArc());
                     intersectionMap.get(road.getEndId()).addIn(road);
                     intersectionMap.get(road.getStartId()).addOut(road);
 
