@@ -60,7 +60,7 @@ public class Vechicle extends Actor{
         if (d > 0 || next) {
             isRiding = false;
             this.comingFromArc = currentRoad.getEndArc();
-             nextRoad();
+            nextRoad();
             sim.getIntersection(currentRoad.getEndId()).arrived(this.comingFromArc, this);
         } else {
             if (dNext > 0) next=true;
@@ -77,7 +77,7 @@ public class Vechicle extends Actor{
     }
 
     public synchronized void nextRoad(){
-        if (route.size() >= 1) {
+        if (!route.isEmpty()) {
             this.x = route.peek().getEnd().x;
             this.y = route.peek().getEnd().y;
             route.remove();
