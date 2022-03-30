@@ -183,7 +183,7 @@ public class Intersection extends Actor {
                 for (int i = 0; i < roundabout.length; i++) {
                     if (roundabout[i] == null) continue;
                     if (i % 3 == 0) {
-                        System.out.println(roundabout[i].toString());
+                        System.out.println(roundabout[i].toString() + "Type of intersection: " + this.type);
                         if (i / 3 == roundabout[i].getRoute().peek().getStartArc()) {
                             roundabout[i].setRiding(true);
                             roundabout[i] = null;
