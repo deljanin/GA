@@ -21,14 +21,7 @@ public class Vechicle extends Actor{
         this.route = new LinkedList<>(route);
         this.x = this.route.peek().getStart().x;
         this.y = this.route.peek().getStart().y;
-        /*
-        this.x = (float) sim.getXY(this.route.peek().getStartId()).getX();                     //Kako dostopat v routu preko start in end Idjev do koordinat....
-        this.y = (float) sim.getXY(this.route.peek().getStartId()).getY();
-         */
     }
-
-
-    /*tick too fast for render*/
 
     @Override
     public void tick(double elapsedTime) throws InterruptedException {
@@ -37,7 +30,7 @@ public class Vechicle extends Actor{
             isFinished = true;
         }
         if (!isRiding || isFinished) return;
-        //dont be afraid of references
+
         Road currentRoad = route.peek();
 
         float totalTicks = currentRoad.getLength() / this.speed; // dobimo vse tick-e tako da delimo dolžino v metrih z hitrostjo v m/s
@@ -137,6 +130,7 @@ public class Vechicle extends Actor{
         return "Vechicle{" +
                 "x=" + x +
                 ", y=" + y +
+                ", routeSize=" + route.size() +
                 ", isRiding=" + isRiding +
                 ", isFinished=" + isFinished +
                 ", comingFromArc=" + comingFromArc +

@@ -183,6 +183,7 @@ public class Intersection extends Actor {
                 for (int i = 0; i < roundabout.length; i++) {
                     if (roundabout[i] == null) continue;
                     if (i % 3 == 0) {
+                        System.out.println(roundabout[i].toString());
                         if (i / 3 == roundabout[i].getRoute().peek().getStartArc()) {
                             roundabout[i].setRiding(true);
                             roundabout[i] = null;
@@ -198,21 +199,15 @@ public class Intersection extends Actor {
                         going = roundabout.length - 1;
                     }
                     if (roundabout[coming] == null && roundabout[going] == null && roundabout[entrance] == null) {
-                        roundabout[going] = x;
                         vehicleQueue.get(arc).remove();
+                        roundabout[going] = x;
                     }
                 });
                 break;
             case 0:
-                vehicleQueue.values().forEach(q -> {
-                    if (!q.isEmpty()) {
-                        q.peek().setRiding(true);
-                        if (q.peek().getRoute().isEmpty()) {
-                            q.peek().setRiding(false);
-                            q.peek().setFinished(true);
-                        }
-                        q.remove();
-                    }
+                onTheIntersection.forEach(v -> {
+                    vehicleQueue.get(v.getComingFromArc()).remove();
+                    v.setRiding(true);
                 });
                 break;
             default:
@@ -222,7 +217,7 @@ public class Intersection extends Actor {
     }
 
     public void arrived(int roadEndArc, Vechicle car) throws InterruptedException {
-        if (!car.isFinished()) vehicleQueue.get(roadEndArc).put(car);
+        vehicleQueue.get(roadEndArc).put(car);
     }
 
     private void shift() {

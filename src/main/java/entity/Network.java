@@ -105,12 +105,13 @@ public class Network {
 
 
             //Why do routes always generate in the same way?
-            DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);   // test z enim avtkom, ali je pravilno da tukaj definiramo poti in naredimo vse avte?
+            DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph); // test z enim avtkom, ali je pravilno da tukaj definiramo poti in naredimo vse avte?
+
             Random rnd = new Random(config.seed);
             for (int i = 0; i < config.numberOfVehicles; i++) {
                 Collections.shuffle(parking);
                 List<Road> route;
-                while( (route = dijkstraShortestPath.getPath(parking.getFirst(), parking.getLast()).getEdgeList()).isEmpty()){
+                while((route = dijkstraShortestPath.getPath(parking.getFirst(), parking.getLast()).getEdgeList()).isEmpty()){
                     Collections.shuffle(parking);
                 }
                 //debug print of roads7
