@@ -22,7 +22,7 @@ public class Network {
     private HashMap<Integer, Intersection> intersectionMap;
     private HashMap<Integer, Road> roadMap;
     private Graph<Intersection, Road> graph;
-    private List<Vechicle> cars = new ArrayList<>();
+    private List<Vehicle> cars = new ArrayList<>();
     private Simulation simulation;
     private Config config;
 
@@ -116,7 +116,7 @@ public class Network {
                 }
                 //debug print of roads7
                 //test.stream().forEach(road -> System.out.println(road));
-                Vechicle car = new Vechicle(14,route,simulation);
+                Vehicle car = new Vehicle(14,route,simulation);
                 cars.add(car);             // list avtkov, ki jih vrnemo simulaciji
             }
 
@@ -157,7 +157,7 @@ public class Network {
         return roadMap;
     }
 
-    public List<Vechicle> getCars() {return cars;}
+    public List<Vehicle> getCars() {return cars;}
 
     public void setRoadMap(HashMap<Integer, Road> roadMap) {
         this.roadMap = roadMap;

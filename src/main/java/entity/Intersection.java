@@ -15,8 +15,8 @@ public class Intersection extends Actor {
     private int arc2;
     private HashMap<Integer, Road> roadsIn;
     private HashMap<Integer, Road> roadsOut;
-    private HashMap<Integer, BlockingQueue<Vechicle>> vehicleQueue;
-    private Vechicle[] roundabout;
+    private HashMap<Integer, BlockingQueue<Vehicle>> vehicleQueue;
+    private Vehicle[] roundabout;
     private int semaphoreTimer = 40;
     private boolean semaphore = true;
 
@@ -62,7 +62,7 @@ public class Intersection extends Actor {
     }
 
     public void initialize() {
-        vehicleQueue = new HashMap<Integer, BlockingQueue<Vechicle>>();
+        vehicleQueue = new HashMap<Integer, BlockingQueue<Vehicle>>();
         roadsIn.values().forEach(road -> {
             vehicleQueue.put(road.getEndArc(), new LinkedBlockingQueue<>());
         });
@@ -77,7 +77,7 @@ public class Intersection extends Actor {
         for (Road road : roadsOutArray) {
             if (road.getStartArc() > max) max = road.getStartArc();
         }
-        roundabout = new Vechicle[(max + 1) * 3];
+        roundabout = new Vehicle[(max + 1) * 3];
     }
 
     @Override
@@ -106,10 +106,10 @@ public class Intersection extends Actor {
     }
 
     synchronized public void canIGo() {
-        List<Vechicle> onTheIntersection;
+        List<Vehicle> onTheIntersection;
         if (vehicleQueue.values().stream().filter(Collection::isEmpty).count() == vehicleQueue.size() && type != 3)
             return;
-        onTheIntersection = new ArrayList<Vechicle>();
+        onTheIntersection = new ArrayList<Vehicle>();
         vehicleQueue.values().forEach(q -> {
             if (!q.isEmpty()) onTheIntersection.add(q.peek());
         });
@@ -123,7 +123,7 @@ public class Intersection extends Actor {
                     return;
                 }
                 if (!vehicleQueue.get(this.arc1).isEmpty() ) {
-                    Vechicle arc1Car = vehicleQueue.get(this.arc1).peek();
+                    Vehicle arc1Car = vehicleQueue.get(this.arc1).peek();
                     if (arc1Car != null) {
                         vehicleQueue.get(arc1Car.getComingFromArc()).remove();
                         arc1Car.setRiding(true);
@@ -182,11 +182,12 @@ public class Intersection extends Actor {
                 if (!(Arrays.stream(roundabout).allMatch(Objects::isNull))) shift();
                 for (int i = 0; i < roundabout.length; i++) {
                     if (roundabout[i] == null) continue;
+                    Vehicle vehicle = roundabout[i];
                     if (i % 3 == 0) {
-                        System.out.println(roundabout[i].toString() + "Type of intersection: " + this.type);
-                        if (i / 3 == roundabout[i].getRoute().peek().getStartArc()) {
-                            roundabout[i].setRiding(true);
+                        System.out.println(vehicle.toString());
+                        if (i / 3 == vehicle.getRoute().peek().getStartArc()) {
                             roundabout[i] = null;
+                            vehicle.setRiding(true);
                         }
                     }
                 }
@@ -216,12 +217,12 @@ public class Intersection extends Actor {
         }
     }
 
-    public void arrived(int roadEndArc, Vechicle car) throws InterruptedException {
+    public void arrived(int roadEndArc, Vehicle car) throws InterruptedException {
         vehicleQueue.get(roadEndArc).put(car);
     }
 
     private void shift() {
-        Vechicle temp = roundabout[0];
+        Vehicle temp = roundabout[0];
         System.arraycopy(roundabout, 1, roundabout, 0, roundabout.length - 1);
         roundabout[roundabout.length - 1] = temp;
     }

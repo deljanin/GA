@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Queue;
 
 
-public class Vechicle extends Actor{
+public class Vehicle extends Actor{
     private float speed;
     private Queue<Road> route;
     private boolean isRiding = true;
@@ -15,7 +15,7 @@ public class Vechicle extends Actor{
     private boolean next = false;
     private int comingFromArc;
 
-    public Vechicle(float speed, List<Road> route, Simulation simulation) {
+    public Vehicle(float speed, List<Road> route, Simulation simulation) {
         super(0,0, simulation);
         this.speed = speed;
         this.route = new LinkedList<>(route);
@@ -25,13 +25,13 @@ public class Vechicle extends Actor{
 
     @Override
     public void tick(double elapsedTime) throws InterruptedException {
-        if (route.isEmpty()) {
-            isRiding = false;
-            isFinished = true;
+        if (this.route.isEmpty()) {
+            this.isRiding = false;
+            this.isFinished = true;
         }
-        if (!isRiding || isFinished) return;
+        if (!this.isRiding || this.isFinished) return;
 
-        Road currentRoad = route.peek();
+        Road currentRoad = this.route.peek();
 
         float totalTicks = currentRoad.getLength() / this.speed; // dobimo vse tick-e tako da delimo dolžino v metrih z hitrostjo v m/s
 
@@ -57,13 +57,12 @@ public class Vechicle extends Actor{
         //---------------------------------------------------------------------
 
         //If radius squared of the intersection is >= 0 then we are at the intersection...
-        if (d > 0 || next) {
-            isRiding = false;
+        if (d > 0 || this.next) {
             this.comingFromArc = currentRoad.getEndArc();
-            nextRoad();
-            sim.getIntersection(currentRoad.getEndId()).arrived(this.comingFromArc, this);
+            this.nextRoad();
+            this.sim.getIntersection(currentRoad.getEndId()).arrived(this.comingFromArc, this);
         } else {
-            if (dNext > 0) next=true;
+            if (dNext > 0) this.next=true;
             // dobimo trenutne koordinate tako, da množimo steps z elapsed time z one Step
             this.x = this.x + oneRealStepX;
             this.y = this.y + oneRealStepY;
@@ -77,12 +76,13 @@ public class Vechicle extends Actor{
     }
 
     public synchronized void nextRoad(){
-        if (!route.isEmpty()) {
+        if (!this.route.isEmpty()) {
             this.x = route.peek().getEnd().x;
             this.y = route.peek().getEnd().y;
-            route.remove();
-            next=false;
+            this.route.remove();
         }
+        this.next=false;
+        this.isRiding = false;
     }
 
     public float getSpeed() {

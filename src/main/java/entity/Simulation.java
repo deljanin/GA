@@ -11,9 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Simulation extends Canvas implements Runnable {
     private boolean running;
@@ -100,10 +97,10 @@ public class Simulation extends Canvas implements Runnable {
                 e.printStackTrace();
             }
         });
-        if(actors.stream().filter(actor -> actor.getClass() == Vechicle.class).allMatch(vehicle -> ((Vechicle) vehicle).isFinished())){
+        if(actors.stream().filter(actor -> actor.getClass() == Vehicle.class).allMatch(vehicle -> ((Vehicle) vehicle).isFinished())){
             System.out.println("Simulation finished in: " + ticks);
             System.exit(0);
-        }else System.out.println("How many cars haven't finished yet: " + actors.stream().filter(a -> a.getClass() == Vechicle.class && !((Vechicle) a).isFinished()).count());
+        }else System.out.println("How many cars haven't finished yet: " + actors.stream().filter(a -> a.getClass() == Vehicle.class && !((Vehicle) a).isFinished()).count());
     }
 
     private void render(double elapsedTime) {
