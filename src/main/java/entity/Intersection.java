@@ -184,7 +184,6 @@ public class Intersection extends Actor {
                     if (roundabout[i] == null) continue;
                     Vehicle vehicle = roundabout[i];
                     if (i % 3 == 0) {
-                        System.out.println(vehicle.toString());
                         if (i / 3 == vehicle.getRoute().peek().getStartArc()) {
                             roundabout[i] = null;
                             vehicle.setRiding(true);
