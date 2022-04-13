@@ -19,16 +19,17 @@ public class Simulation extends Canvas implements Runnable {
     private BufferedImage cityImage;
     ArrayList<Actor> actors = new ArrayList<>();; //objects within the simulation
     Config config;
+    boolean GUI;
 
-    private void initialize(){
+    private void initialize(boolean GUI, String configPath, String intersectionPath){
 
         try {
-            config = new Gson().fromJson(Files.readString(Paths.get("config.json")), Config.class);
+            config = new Gson().fromJson(Files.readString(Paths.get(configPath)), Config.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
         //not needed presently, will be useful to set up data structures, compute paths, etc..
-        network = new Network("intersections.json", "roads.json", this, config);
+        network = new Network(intersectionPath, "roads.json", this, config);
         network.initialize();
         //populate intersection
         actors.addAll(network.getIntersectionMap().values());
@@ -47,17 +48,16 @@ public class Simulation extends Canvas implements Runnable {
     }
     //constructor overloading
     public Simulation() {
-        initialize();
     }
-    public Simulation(boolean running) {
+    public Simulation(boolean running, boolean GUI, String configPath, String intersectionPath) {
         this.running = running;
-        initialize();
+        this.GUI = GUI;
+        initialize(GUI,configPath,intersectionPath);
     }
 
     public Simulation(boolean running, ArrayList<Actor> actors) {
         this.running = running;
         this.actors = actors;
-        initialize();
     }
 
     public void run() {
@@ -75,7 +75,7 @@ public class Simulation extends Canvas implements Runnable {
                 double slowdown = delta * config.simulationSpeed; //slowdown
                 ticks++;
                 tick(slowdown);
-                render(delta); //I cap render to 60FPS, ce hoces max fps gre render ven
+                if (this.GUI) render(delta); //I cap render to 60FPS, ce hoces max fps gre render ven
                 frames++;
 
                 if (System.currentTimeMillis() - timer > 1000) {
