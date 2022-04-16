@@ -1,5 +1,5 @@
 {
   "simulationSpeed": 1,
   "seed" : 5,
-  "numberOfVehicles" : 100000
+  "numberOfVehicles" : 5000
 }

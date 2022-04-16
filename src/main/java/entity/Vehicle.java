@@ -32,8 +32,9 @@ public class Vehicle extends Actor{
         if (!this.isRiding || this.isFinished) return;
 
         Road currentRoad = this.route.peek();
+        this.speed = currentRoad.getSpeed();
 
-        float totalTicks = currentRoad.getLength() / this.speed; // dobimo vse tick-e tako da delimo dolžino v metrih z hitrostjo v m/s
+        float totalTicks = currentRoad.getLength() / this.speed;
 
         float oneStepX = ((currentRoad.getStart().x - currentRoad.getEnd().x) / totalTicks)*(-1);
         float oneStepY = ((currentRoad.getStart().y - currentRoad.getEnd().y) / totalTicks)*(-1);
@@ -43,17 +44,17 @@ public class Vehicle extends Actor{
 
 
         //--------------CIRCLE AROUND INTERSECTIONS CALCULATION----------------
-        float prviParameter = (currentRoad.getEnd().x - this.x)*(currentRoad.getEnd().x - this.x);
-        float prviParameterNext = (currentRoad.getEnd().x - this.x+oneRealStepX)*(currentRoad.getEnd().x - this.x+oneRealStepX);
+        float firstParameter = (currentRoad.getEnd().x - this.x)*(currentRoad.getEnd().x - this.x);
+        float firstParameterNext = (currentRoad.getEnd().x - this.x+oneRealStepX)*(currentRoad.getEnd().x - this.x+oneRealStepX);
         float drugiParameter = (currentRoad.getEnd().y - this.y)*(currentRoad.getEnd().y - this.y);
         float drugiParameterNext = (currentRoad.getEnd().y - this.y+oneRealStepY)*(currentRoad.getEnd().y - this.y+oneRealStepY);
 
-        float sestevek = prviParameter + drugiParameter;
-        float sestevekNext = prviParameterNext + drugiParameterNext;
+        float sum = firstParameter + drugiParameter;
+        float sumNext = firstParameterNext + drugiParameterNext;
 
 
-        float d = 10*10 - sestevek;
-        float dNext = 10*10 - sestevekNext;
+        float d = 10*10 - sum;
+        float dNext = 10*10 - sumNext;
         //---------------------------------------------------------------------
 
         //If radius squared of the intersection is >= 0 then we are at the intersection...
@@ -63,7 +64,6 @@ public class Vehicle extends Actor{
             this.sim.getIntersection(currentRoad.getEndId()).arrived(this.comingFromArc, this);
         } else {
             if (dNext > 0) this.next=true;
-            // dobimo trenutne koordinate tako, da množimo steps z elapsed time z one Step
             this.x = this.x + oneRealStepX;
             this.y = this.y + oneRealStepY;
         }
@@ -127,7 +127,7 @@ public class Vehicle extends Actor{
 
     @Override
     public String toString() {
-        return "Vechicle{" +
+        return "Vehicle{" +
                 "x=" + x +
                 ", y=" + y +
                 ", routeSize=" + route.size() +

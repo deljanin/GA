@@ -21,7 +21,7 @@ public class Simulation extends Canvas implements Runnable {
     Config config;
     boolean GUI;
 
-    private void initialize(boolean GUI, String configPath, String intersectionPath){
+    private void initialize(String configPath, String intersectionPath){
 
         try {
             config = new Gson().fromJson(Files.readString(Paths.get(configPath)), Config.class);
@@ -52,7 +52,7 @@ public class Simulation extends Canvas implements Runnable {
     public Simulation(boolean running, boolean GUI, String configPath, String intersectionPath) {
         this.running = running;
         this.GUI = GUI;
-        initialize(GUI,configPath,intersectionPath);
+        initialize(configPath,intersectionPath);
     }
 
     public Simulation(boolean running, ArrayList<Actor> actors) {
@@ -98,9 +98,9 @@ public class Simulation extends Canvas implements Runnable {
             }
         });
         if(actors.stream().filter(actor -> actor.getClass() == Vehicle.class).allMatch(vehicle -> ((Vehicle) vehicle).isFinished())){
-            System.out.println("Simulation finished in: " + ticks);
+            System.out.println(ticks);
             System.exit(0);
-        }else System.out.println("How many cars haven't finished yet: " + actors.stream().filter(a -> a.getClass() == Vehicle.class && !((Vehicle) a).isFinished()).count());
+        }//else System.out.println("How many cars haven't finished yet: " + actors.stream().filter(a -> a.getClass() == Vehicle.class && !((Vehicle) a).isFinished()).count());
     }
 
     private void render(double elapsedTime) {

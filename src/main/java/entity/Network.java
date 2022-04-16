@@ -34,7 +34,7 @@ public class Network {
     }
 
 
-    public boolean initialize() {
+    public void initialize() {
         Gson gson = new Gson();
         try {
             //parse from json to dataclass (IntersrctionData)
@@ -44,23 +44,20 @@ public class Network {
             //now construct actual Intersection objects from the data class
             List<Intersection> intersections = new ArrayList<Intersection>();
             intersectionsData.forEach(I -> intersections.add(new Intersection(I, simulation)));
-            intersectionMap = new HashMap<Integer, Intersection>(intersections.size());
+            intersectionMap = new HashMap<>(intersections.size());
             intersections.forEach(intersection -> {
                 intersectionMap.put(intersection.getId(), intersection);
             });
-            System.out.println("Successfully imported " + intersections.size() + " intersections");
-            //parse from json to dataclass (RoadData)
             listType = new TypeToken<ArrayList<RoadData>>() {}.getType();
             reader = new JsonReader(new FileReader(this.roads_file));
             List<RoadData> roadsData = new Gson().fromJson(reader, listType);
             List<Road> roads = new ArrayList<Road>();
             roadsData.forEach(R-> roads.add(new Road(R,simulation)));
-            roadMap = new HashMap<Integer, Road>(roads.size());
+            roadMap = new HashMap<>(roads.size());
             roads.forEach(road -> {
                 roadMap.put(road.getId(), road);
             });
-            System.out.println("Successfully imported " + roads.size() + " roads");
-            graph = new DirectedWeightedPseudograph<Intersection,Road>(Road.class);
+            graph = new DirectedWeightedPseudograph<>(Road.class);
 
             //add intersections as vertexes
             intersections.forEach(intersection -> graph.addVertex(intersection));
@@ -76,7 +73,6 @@ public class Network {
                     graph.setEdgeWeight(road, road.getLength());
 
                     //Adds incoming and outgoing roads of an intersections
-                    if (road.getEndId() == 42) System.out.println("Arcs on intersection 42: " + road.getEndArc());
                     intersectionMap.get(road.getEndId()).addIn(road);
                     intersectionMap.get(road.getStartId()).addOut(road);
 
@@ -86,26 +82,9 @@ public class Network {
                 }
             });
 
-            //intersectionMap.values().forEach(v -> System.out.println("id: " + v.getId() + ", in: " + v.getRoadsIn().size() + ", out: " + v.getRoadsOut().size()));
-
-            System.out.println("Constructed graph with "
-                    + graph.edgeSet().size() + " edges and "
-                    + graph.vertexSet().size() + " vertices"
-            );
-
-            //fixed?: System.out.println(roads.get(1).getLength());   //  problem da graf ne mappa length --> weight
-
-
             LinkedList<Intersection> parking = intersectionMap.values().stream().filter(intersection -> intersection.getType() == 0).collect(Collectors.toCollection(LinkedList::new));
-//            for (Intersection x:intersectionMap.values().stream().filter()) {
-//                if (x.getType() == 3){
-//                    parking.add(x);
-//                }
-//            }
 
-
-            //Why do routes always generate in the same way?
-            DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph); // test z enim avtkom, ali je pravilno da tukaj definiramo poti in naredimo vse avte?
+            DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);
 
             Random rnd = new Random(config.seed);
             for (int i = 0; i < config.numberOfVehicles; i++) {
@@ -114,19 +93,15 @@ public class Network {
                 while((route = dijkstraShortestPath.getPath(parking.getFirst(), parking.getLast()).getEdgeList()).isEmpty()){
                     Collections.shuffle(parking);
                 }
-                //debug print of roads7
-                //test.stream().forEach(road -> System.out.println(road));
                 Vehicle car = new Vehicle(14,route,simulation);
-                cars.add(car);             // list avtkov, ki jih vrnemo simulaciji
+                cars.add(car);
             }
 
 
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found exception, initialization failed.");
-            return false;
         }
-        return true;
     }
 
     public String getIntersections_file() {

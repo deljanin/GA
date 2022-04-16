@@ -11,6 +11,7 @@ public class Road extends Actor{
     private int startArc;
     private int endArc;
     private float length;
+    private float speed;
     private int type;
 
     private Intersection start;
@@ -24,6 +25,7 @@ public class Road extends Actor{
         this.startArc = roadData.startArc;
         this.endArc = roadData.endArc;
         this.length = roadData.length;
+        this.speed = roadData.speed;
         this.type = roadData.type;
         start = sim.getIntersection(startId);
         end = sim.getIntersection(endId);
@@ -36,12 +38,8 @@ public class Road extends Actor{
 
     @Override
     public void render(Graphics graphics, double elapsedTime) {
-        //render at x,y. use elapsedTime where animations are needed (likely never)
-        //TODO: render road as line
-        //Coordinates startCoordinates = sim.getXY(startId);
-        //Coordinates endCoordinates = sim.getXY(endId);
         graphics.setColor(Color.black);
-        graphics.drawLine(Math.round(start.x),Math.round(start.y),Math.round(end.x),Math.round(end.y)); //Fix with floor or whatever, think about it....
+        graphics.drawLine(Math.round(start.x), Math.round(start.y), Math.round(end.x), Math.round(end.y));
     }
 
     public int getId() {
@@ -90,6 +88,14 @@ public class Road extends Actor{
 
     public void setLength(float length) {
         this.length = length;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
     }
 
     public int getType() {

@@ -9,5 +9,6 @@ public class RoadData {
     public int startArc;
     public int endArc;
     public float length;
+    public float speed;
     public int type;
 }

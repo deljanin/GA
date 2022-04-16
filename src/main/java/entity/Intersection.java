@@ -57,8 +57,8 @@ public class Intersection extends Actor {
         this.type = intersectionData.type;
         this.arc1 = intersectionData.arc1;
         this.arc2 = intersectionData.arc2;
-        this.roadsIn = new HashMap<Integer, Road>();
-        this.roadsOut = new HashMap<Integer, Road>();
+        this.roadsIn = new HashMap<>();
+        this.roadsOut = new HashMap<>();
     }
 
     public void initialize() {
@@ -82,11 +82,7 @@ public class Intersection extends Actor {
 
     @Override
     public void render(Graphics graphics, double elapsedTime) {
-        //render at x,y. use elapsedTime where animations are needed (likely never)
         graphics.setColor(getColor());
-        /*if(this.id == 20){
-            graphics.setColor(new Color(0x00FF32));
-         }*/
         graphics.fillOval((int) this.x, (int) this.y, 10, 10);
     }
 
