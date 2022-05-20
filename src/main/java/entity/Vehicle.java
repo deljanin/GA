@@ -25,7 +25,7 @@ public class Vehicle extends Actor{
 
     @Override
     public synchronized void tick(double elapsedTime) throws InterruptedException {
-        if (this.route.isEmpty()) {
+        if (this.route.isEmpty() || this.x < 0 || this.y < 0 || this.x > 800 || this.y > 800) {
             this.isRiding = false;
             this.isFinished = true;
         }
