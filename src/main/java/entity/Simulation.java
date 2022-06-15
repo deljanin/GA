@@ -20,6 +20,8 @@ public class Simulation extends Canvas implements Runnable {
     Vector<Actor> actors = new Vector<>(); //objects within the simulation
     Config config;
     boolean GUI;
+    int totalTicksWaiting = 0;
+    int totalCars = 0;
 
     private void initialize(String configPath, String intersectionPath){
 
@@ -101,13 +103,11 @@ public class Simulation extends Canvas implements Runnable {
  */
 
     private void tick() throws InterruptedException {
-        System.out.println(ticks);
         //let actors update them self
         Enumeration<Actor> vectorEnums = actors.elements();
 
         while(vectorEnums.hasMoreElements()) {
-            Actor v = vectorEnums.nextElement();
-            v.tick(1);
+            vectorEnums.nextElement().tick(1);
         }
     }
 

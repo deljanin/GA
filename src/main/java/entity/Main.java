@@ -2,7 +2,7 @@ package entity;
 
 public class Main {
     public static void main(String[] args) {
-        boolean GUI = true;
+        boolean GUI = false;
         String configPath = "config.json";
         String intersectionPath = "intersections.json";
         if (args.length != 0) {

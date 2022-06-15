@@ -15,6 +15,8 @@ public class Vehicle extends Actor{
     private boolean next = false;
     private int comingFromArc;
 
+    private int waiting = 0;
+
     public Vehicle(float speed, List<Road> route, Simulation simulation) {
         super(0,0, simulation);
         this.speed = speed;
@@ -28,10 +30,16 @@ public class Vehicle extends Actor{
         if (this.route.isEmpty() || this.x < 0 || this.y < 0 || this.x > 800 || this.y > 800) {
             this.isRiding = false;
             this.isFinished = true;
+            sim.totalTicksWaiting += waiting;
             sim.actors.remove(this);
             if (!route.isEmpty()) System.exit(0);
         }
-        if (!this.isRiding || this.isFinished) return;
+        if (!this.isRiding || this.isFinished) {
+            if (!this.isFinished){
+                waiting++;
+            }
+            return;
+        }
 
         Road currentRoad = this.route.peek();
         this.speed = currentRoad.getSpeed();
