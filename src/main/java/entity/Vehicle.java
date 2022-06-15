@@ -28,6 +28,7 @@ public class Vehicle extends Actor{
         if (this.route.isEmpty() || this.x < 0 || this.y < 0 || this.x > 800 || this.y > 800) {
             this.isRiding = false;
             this.isFinished = true;
+            sim.actors.remove(this);
             if (!route.isEmpty()) System.exit(0);
         }
         if (!this.isRiding || this.isFinished) return;

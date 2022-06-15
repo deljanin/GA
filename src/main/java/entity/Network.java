@@ -6,6 +6,8 @@ import com.google.gson.stream.JsonReader;
 import data.IntersectionData;
 import data.RoadData;
 import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
+import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
 
@@ -26,6 +28,7 @@ public class Network {
     private Config config;
     private LinkedList<Intersection> parking;
     private DijkstraShortestPath dijkstraShortestPath;
+    AllDirectedPaths<Intersection, Road> allPaths;
     private int k=-1;
 
     public Network(String intersections_file, String roads_file, Simulation simulation, Config config) {
@@ -85,6 +88,8 @@ public class Network {
 
             parking = intersectionMap.values().stream().filter(intersection -> intersection.getType() == 0).collect(Collectors.toCollection(LinkedList::new));
             dijkstraShortestPath = new DijkstraShortestPath(graph);
+            allPaths = new AllDirectedPaths<Intersection, Road>(graph);
+
 
 
 
@@ -103,27 +108,20 @@ public class Network {
         Vector<Vehicle> cars = new Vector<>();
 
         for (Emitter emitter: config.emitters) {
-            if (ticks % emitter.spaceDrivingIn[k] == 0) {
+            if (ticks % emitter.spaceDrivingIn[k%8] == 0) {
                 Collections.shuffle(parking, rnd);
-                List<Road> route;
-                while ((route = dijkstraShortestPath.getPath(intersectionMap.get(emitter.id), parking.getLast()).getEdgeList()).isEmpty()) {
-                    Collections.shuffle(parking, rnd);
-                }
+                List<Road> route = dijkstraShortestPath.getPath(intersectionMap.get(emitter.id), parking.getLast()).getEdgeList();
                 Vehicle car = new Vehicle(14, route, simulation);
                 cars.add(car);
-            } else if (ticks % emitter.spaceDrivingOut[k] == 0) {
+            } else if (ticks % emitter.spaceDrivingOut[k%8] == 0) {
                 Collections.shuffle(parking, rnd);
-                List<Road> route;
-                while ((route = dijkstraShortestPath.getPath(parking.getFirst(), intersectionMap.get(emitter.id)).getEdgeList()).isEmpty()) {
-                    Collections.shuffle(parking, rnd);
-                }
+                List<Road> route = dijkstraShortestPath.getPath(parking.getFirst(), intersectionMap.get(emitter.id)).getEdgeList();
                 Vehicle car = new Vehicle(14, route, simulation);
                 cars.add(car);
             }
         }
         for (int i = 0; i < Math.round((cars.size()/0.7)*0.3); i++) {
             Collections.shuffle(parking, rnd);
-
             List<Road> route;
             while ((route = dijkstraShortestPath.getPath(parking.getFirst(), parking.getLast()).getEdgeList()).isEmpty()) {
                 Collections.shuffle(parking, rnd);

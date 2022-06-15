@@ -101,24 +101,14 @@ public class Simulation extends Canvas implements Runnable {
  */
 
     private void tick() throws InterruptedException {
-        this.ticks++;
+        System.out.println(ticks);
         //let actors update them self
-
-
         Enumeration<Actor> vectorEnums = actors.elements();
 
         while(vectorEnums.hasMoreElements()) {
-            vectorEnums.nextElement().tick(1);
+            Actor v = vectorEnums.nextElement();
+            v.tick(1);
         }
-
-        Collections.synchronizedList(actors).forEach(actor -> {
-            try {
-                actor.tick(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-        actors.removeIf(actor -> actor.getClass() == Vehicle.class && ((Vehicle) actor).isFinished());
     }
 
     private void render() {
@@ -132,7 +122,11 @@ public class Simulation extends Canvas implements Runnable {
 
         graphics.drawImage(cityImage,0,0,null);
         //i let all actors render them self
-        actors.stream().forEach(actor -> actor.render(graphics, 1));
+        Enumeration<Actor> vectorEnums = actors.elements();
+
+        while(vectorEnums.hasMoreElements()) {
+            vectorEnums.nextElement().render(graphics,1);
+        }
         graphics.dispose();
         bs.show();
     }

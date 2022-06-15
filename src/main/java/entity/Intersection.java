@@ -200,14 +200,11 @@ public class Intersection extends Actor {
                     }
                 });
                 break;
-            case 0:
+            default:
                 onTheIntersection.forEach(v -> {
                     vehicleQueue.get(v.getComingFromArc()).remove();
                     v.setRiding(true);
                 });
-                break;
-            default:
-                System.out.println("this shouldn't happen");
 
         }
     }
