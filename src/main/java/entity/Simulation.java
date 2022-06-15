@@ -60,6 +60,14 @@ public class Simulation extends Canvas implements Runnable {
         this.actors = actors;
     }
 
+    public void run(){
+        while (running) {
+            ticks++;
+            tick(1);
+            if (this.GUI) render(1); //I cap render to 60FPS, ce hoces max fps gre render ven
+        }
+    }
+/*
     public void run() {
         long lastTime = System.nanoTime();
         double amountOfTicks = 60.0; //i want 60fps for update
@@ -86,6 +94,7 @@ public class Simulation extends Canvas implements Runnable {
             }
         }
     }
+ */
 
     private void tick(double elapsedTime) {
         this.ticks++;

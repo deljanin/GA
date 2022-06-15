@@ -66,9 +66,9 @@ public class Network {
                 if(road != null) {
                     graph.addEdge(
 
-                            intersectionMap.get(road.getStartId()), //start
-                            intersectionMap.get(road.getEndId()), //end
-                            road
+                    intersectionMap.get(road.getStartId()), //start
+                    intersectionMap.get(road.getEndId()), //end
+                    road
                     );
                     graph.setEdgeWeight(road, road.getLength());
 
@@ -76,19 +76,18 @@ public class Network {
                     intersectionMap.get(road.getEndId()).addIn(road);
                     intersectionMap.get(road.getStartId()).addOut(road);
 
-
                     //initializing intersection queues for every incoming road
                     intersectionMap.values().forEach(Intersection::initialize);
                 }
             });
 
             LinkedList<Intersection> parking = intersectionMap.values().stream().filter(intersection -> intersection.getType() == 0).collect(Collectors.toCollection(LinkedList::new));
-
             DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);
 
             Random rnd = new Random(config.seed);
             for (int i = 0; i < config.numberOfVehicles; i++) {
-                Collections.shuffle(parking);
+                Collections.shuffle(parking, rnd);
+
                 List<Road> route;
                 while((route = dijkstraShortestPath.getPath(parking.getFirst(), parking.getLast()).getEdgeList()).isEmpty()){
                     Collections.shuffle(parking);
@@ -96,9 +95,6 @@ public class Network {
                 Vehicle car = new Vehicle(14,route,simulation);
                 cars.add(car);
             }
-
-
-
         } catch (FileNotFoundException e) {
             System.out.println("File not found exception, initialization failed.");
         }
