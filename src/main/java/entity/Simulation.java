@@ -10,14 +10,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Simulation extends Canvas implements Runnable {
     private boolean running;
     private long ticks = 0;
     private Network network;
     private BufferedImage cityImage;
-    ArrayList<Actor> actors = new ArrayList<>();; //objects within the simulation
+    Vector<Actor> actors = new Vector<>(); //objects within the simulation
     Config config;
     boolean GUI;
 
@@ -35,7 +35,6 @@ public class Simulation extends Canvas implements Runnable {
         actors.addAll(network.getIntersectionMap().values());
         //populate roads
         actors.addAll(network.getRoadMap().values());
-        actors.addAll(network.getCars());// Add all cars to simulation
 
         actors.forEach(actor -> actor.sim = this);//Add this simulation reference to all actors
 
@@ -55,16 +54,21 @@ public class Simulation extends Canvas implements Runnable {
         initialize(configPath,intersectionPath);
     }
 
-    public Simulation(boolean running, ArrayList<Actor> actors) {
+    public Simulation(boolean running, Vector<Actor> actors) {
         this.running = running;
         this.actors = actors;
     }
 
     public void run(){
         while (running) {
+            network.emit(ticks);
+            try {
+                tick();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            if (this.GUI) render(); //I cap render to 60FPS, ce hoces max fps gre render ven
             ticks++;
-            tick(1);
-            if (this.GUI) render(1); //I cap render to 60FPS, ce hoces max fps gre render ven
         }
     }
 /*
@@ -96,23 +100,28 @@ public class Simulation extends Canvas implements Runnable {
     }
  */
 
-    private void tick(double elapsedTime) {
+    private void tick() throws InterruptedException {
         this.ticks++;
         //let actors update them self
-        actors.stream().forEach(actor -> {
+
+
+        Enumeration<Actor> vectorEnums = actors.elements();
+
+        while(vectorEnums.hasMoreElements()) {
+            vectorEnums.nextElement().tick(1);
+        }
+
+        Collections.synchronizedList(actors).forEach(actor -> {
             try {
-                actor.tick(elapsedTime);
+                actor.tick(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
-        if(actors.stream().filter(actor -> actor.getClass() == Vehicle.class).allMatch(vehicle -> ((Vehicle) vehicle).isFinished())){
-            System.out.println(ticks);
-            System.exit(0);
-        }else System.out.println("How many cars haven't finished yet: " + actors.stream().filter(a -> a.getClass() == Vehicle.class && !((Vehicle) a).isFinished()).count());
+        actors.removeIf(actor -> actor.getClass() == Vehicle.class && ((Vehicle) actor).isFinished());
     }
 
-    private void render(double elapsedTime) {
+    private void render() {
         BufferStrategy bs = this.getBufferStrategy(); //this sounds expensive
         if(bs == null){ //ugly
             this.createBufferStrategy(2);
@@ -123,7 +132,7 @@ public class Simulation extends Canvas implements Runnable {
 
         graphics.drawImage(cityImage,0,0,null);
         //i let all actors render them self
-        actors.stream().forEach(actor -> actor.render(graphics, elapsedTime));
+        actors.stream().forEach(actor -> actor.render(graphics, 1));
         graphics.dispose();
         bs.show();
     }

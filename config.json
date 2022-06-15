@@ -1,5 +1,40 @@
 {
   "simulationSpeed": 1,
   "seed" : 5,
-  "numberOfVehicles" : 50000
+  "numberOfVehicles" : 10,
+  "emitters": [
+    {
+      "id": 56,
+      "totalDrivingIn": [456,0,0,0,0,0,0,0],
+      "totalOvertakingIn": [456,0,0,0,0,0,0,0],
+      "spaceDrivingIn": [150,150,12,5,7,15,9,4],
+      "spaceOvertakingIn": [150,150,12,5,7,15,9,4],
+      "totalDrivingOut": [456,0,0,0,0,0,0,0],
+      "totalOvertakingOut": [456,0,0,0,0,0,0,0],
+      "spaceDrivingOut": [150,150,12,5,7,15,9,4],
+      "spaceOvertakingOut": [150,150,12,5,7,15,9,4]
+    },
+    {
+      "id": 57,
+      "totalDrivingIn": [456,0,0,0,0,0,0,0],
+      "totalOvertakingIn": [456,0,0,0,0,0,0,0],
+      "spaceDrivingIn": [150,150,12,5,7,15,9,4],
+      "spaceOvertakingIn": [150,150,12,5,7,15,9,4],
+      "totalDrivingOut": [456,0,0,0,0,0,0,0],
+      "totalOvertakingOut": [456,0,0,0,0,0,0,0],
+      "spaceDrivingOut": [150,150,12,5,7,15,9,4],
+      "spaceOvertakingOut": [150,150,12,5,7,15,9,4]
+    },
+    {
+      "id": 58,
+      "totalDrivingIn": [456,0,0,0,0,0,0,0],
+      "totalOvertakingIn": [456,0,0,0,0,0,0,0],
+      "spaceDrivingIn": [150,150,12,5,7,15,9,4],
+      "spaceOvertakingIn": [150,150,12,5,7,15,9,4],
+      "totalDrivingOut": [456,0,0,0,0,0,0,0],
+      "totalOvertakingOut": [456,0,0,0,0,0,0,0],
+      "spaceDrivingOut": [150,150,12,5,7,15,9,4],
+      "spaceOvertakingOut": [150,150,12,5,7,15,9,4]
+    }
+  ]
 }

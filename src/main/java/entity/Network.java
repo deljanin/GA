@@ -22,9 +22,11 @@ public class Network {
     private HashMap<Integer, Intersection> intersectionMap;
     private HashMap<Integer, Road> roadMap;
     private Graph<Intersection, Road> graph;
-    private List<Vehicle> cars = new ArrayList<>();
     private Simulation simulation;
     private Config config;
+    private LinkedList<Intersection> parking;
+    private DijkstraShortestPath dijkstraShortestPath;
+    private int k=-1;
 
     public Network(String intersections_file, String roads_file, Simulation simulation, Config config) {
         this.intersections_file = intersections_file;
@@ -81,23 +83,55 @@ public class Network {
                 }
             });
 
-            LinkedList<Intersection> parking = intersectionMap.values().stream().filter(intersection -> intersection.getType() == 0).collect(Collectors.toCollection(LinkedList::new));
-            DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath(graph);
+            parking = intersectionMap.values().stream().filter(intersection -> intersection.getType() == 0).collect(Collectors.toCollection(LinkedList::new));
+            dijkstraShortestPath = new DijkstraShortestPath(graph);
 
-            Random rnd = new Random(config.seed);
-            for (int i = 0; i < config.numberOfVehicles; i++) {
-                Collections.shuffle(parking, rnd);
 
-                List<Road> route;
-                while((route = dijkstraShortestPath.getPath(parking.getFirst(), parking.getLast()).getEdgeList()).isEmpty()){
-                    Collections.shuffle(parking);
-                }
-                Vehicle car = new Vehicle(14,route,simulation);
-                cars.add(car);
-            }
+
         } catch (FileNotFoundException e) {
             System.out.println("File not found exception, initialization failed.");
         }
+    }
+
+    public void emit(long ticks) {
+        Random rnd = new Random(config.seed);
+        if (ticks >= 86400) {//86400 seconds in a day
+            System.out.println("Sim done!");
+            System.exit(0);
+        }
+        if (ticks % 10800 == 0) k++;
+        Vector<Vehicle> cars = new Vector<>();
+
+        for (Emitter emitter: config.emitters) {
+            if (ticks % emitter.spaceDrivingIn[k] == 0) {
+                Collections.shuffle(parking, rnd);
+                List<Road> route;
+                while ((route = dijkstraShortestPath.getPath(intersectionMap.get(emitter.id), parking.getLast()).getEdgeList()).isEmpty()) {
+                    Collections.shuffle(parking, rnd);
+                }
+                Vehicle car = new Vehicle(14, route, simulation);
+                cars.add(car);
+            } else if (ticks % emitter.spaceDrivingOut[k] == 0) {
+                Collections.shuffle(parking, rnd);
+                List<Road> route;
+                while ((route = dijkstraShortestPath.getPath(parking.getFirst(), intersectionMap.get(emitter.id)).getEdgeList()).isEmpty()) {
+                    Collections.shuffle(parking, rnd);
+                }
+                Vehicle car = new Vehicle(14, route, simulation);
+                cars.add(car);
+            }
+        }
+        for (int i = 0; i < Math.round((cars.size()/0.7)*0.3); i++) {
+            Collections.shuffle(parking, rnd);
+
+            List<Road> route;
+            while ((route = dijkstraShortestPath.getPath(parking.getFirst(), parking.getLast()).getEdgeList()).isEmpty()) {
+                Collections.shuffle(parking, rnd);
+            }
+            Vehicle car = new Vehicle(14, route, simulation);
+            cars.add(car);
+        }
+        simulation.actors.addAll(cars);
     }
 
     public String getIntersections_file() {
@@ -127,8 +161,6 @@ public class Network {
     public HashMap<Integer, Road> getRoadMap() {
         return roadMap;
     }
-
-    public List<Vehicle> getCars() {return cars;}
 
     public void setRoadMap(HashMap<Integer, Road> roadMap) {
         this.roadMap = roadMap;
