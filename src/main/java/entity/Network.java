@@ -108,12 +108,22 @@ public class Network {
         Vector<Vehicle> cars = new Vector<>();
 
         for (Emitter emitter: config.emitters) {
-            if (ticks % emitter.spaceDrivingIn[k%8] == 0) {
+            if (emitter.spaceDrivingIn[k%8] != 0 && ticks % emitter.spaceDrivingIn[k%8] == 0) {
                 Collections.shuffle(parking, rnd);
                 List<Road> route = dijkstraShortestPath.getPath(intersectionMap.get(emitter.id), parking.getLast()).getEdgeList();
                 Vehicle car = new Vehicle(14, route, simulation);
                 cars.add(car);
-            } else if (ticks % emitter.spaceDrivingOut[k%8] == 0) {
+            } else if (emitter.spaceOvertakingIn[k%8] != 0 && ticks % emitter.spaceOvertakingIn[k%8] == 0) {
+                Collections.shuffle(parking, rnd);
+                List<Road> route = dijkstraShortestPath.getPath(intersectionMap.get(emitter.id), parking.getLast()).getEdgeList();
+                Vehicle car = new Vehicle(14, route, simulation);
+                cars.add(car);
+            } else if (emitter.spaceDrivingOut[k%8] != 0 && ticks % emitter.spaceDrivingOut[k%8] == 0) {
+                Collections.shuffle(parking, rnd);
+                List<Road> route = dijkstraShortestPath.getPath(parking.getFirst(), intersectionMap.get(emitter.id)).getEdgeList();
+                Vehicle car = new Vehicle(14, route, simulation);
+                cars.add(car);
+            } else if (emitter.spaceOvertakingOut[k%8] != 0 && ticks % emitter.spaceOvertakingOut[k%8] == 0) {
                 Collections.shuffle(parking, rnd);
                 List<Road> route = dijkstraShortestPath.getPath(parking.getFirst(), intersectionMap.get(emitter.id)).getEdgeList();
                 Vehicle car = new Vehicle(14, route, simulation);
