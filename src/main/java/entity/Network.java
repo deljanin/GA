@@ -26,16 +26,18 @@ public class Network {
     private Graph<Intersection, Road> graph;
     private Simulation simulation;
     private Config config;
+    private Distribution distribution;
     private LinkedList<Intersection> parking;
     private DijkstraShortestPath dijkstraShortestPath;
     AllDirectedPaths<Intersection, Road> allPaths;
     private int k=-1;
 
-    public Network(String intersections_file, String roads_file, Simulation simulation, Config config) {
+    public Network(String intersections_file, String roads_file, Simulation simulation, Config config, Distribution distribution) {
         this.intersections_file = intersections_file;
         this.roads_file = roads_file;
         this.simulation = simulation;
         this.config = config;
+        this.distribution = distribution;
     }
 
 
@@ -107,7 +109,7 @@ public class Network {
         if (ticks % 10800 == 0) k++;
         Vector<Vehicle> cars = new Vector<>();
 
-        for (Emitter emitter: config.emitters) {
+        for (Emitter emitter: distribution.emitters) {
             if (emitter.spaceDrivingIn[k%8] != 0 && ticks % emitter.spaceDrivingIn[k%8] == 0) {
                 Collections.shuffle(parking, rnd);
                 List<Road> route = dijkstraShortestPath.getPath(intersectionMap.get(emitter.id), parking.getLast()).getEdgeList();

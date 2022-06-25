@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -19,19 +20,21 @@ public class Simulation extends Canvas implements Runnable {
     private BufferedImage cityImage;
     Vector<Actor> actors = new Vector<>(); //objects within the simulation
     Config config;
+    Distribution distribution;
     boolean GUI;
     int totalTicksWaiting = 0;
     int totalCars = 0;
 
-    private void initialize(String configPath, String intersectionPath){
+    private void initialize(String configPath, String intersectionPath) throws IOException {
 
         try {
             config = new Gson().fromJson(Files.readString(Paths.get(configPath)), Config.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        distribution = new Gson().fromJson(Files.readString(Path.of("distribution.json")), Distribution.class);
         //not needed presently, will be useful to set up data structures, compute paths, etc..
-        network = new Network(intersectionPath, "roads.json", this, config);
+        network = new Network(intersectionPath, "roads.json", this, config, distribution);
         network.initialize();
         //populate intersection
         actors.addAll(network.getIntersectionMap().values());
@@ -50,7 +53,7 @@ public class Simulation extends Canvas implements Runnable {
     //constructor overloading
     public Simulation() {
     }
-    public Simulation(boolean running, boolean GUI, String configPath, String intersectionPath) {
+    public Simulation(boolean running, boolean GUI, String configPath, String intersectionPath) throws IOException {
         this.running = running;
         this.GUI = GUI;
         initialize(configPath,intersectionPath);
