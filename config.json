@@ -1,4 +1,5 @@
 {
   "simulationSpeed": 1,
-  "seed" : 5
+  "seed" : 5,
+  "timeInSec": 86400
 }

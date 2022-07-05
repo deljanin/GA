@@ -102,7 +102,7 @@ public class Network {
 
     public void emit(long ticks) {
         Random rnd = new Random(config.seed);
-        if (ticks >= 86400) {//86400 seconds in a day
+        if (ticks >= config.timeInSec) {//86400 seconds in a day
             System.out.println(simulation.totalTicksWaiting/ simulation.totalCars);
             System.exit(0);
         }
